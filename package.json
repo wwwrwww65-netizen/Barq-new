@@ -1,0 +1,15 @@
+{
+  "name": "toshka-hotspot",
+  "version": "1.0.0",
+  "description": "شبكة توشكا نت - بوابة الهوتسبوت",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'Build complete'",
+    "lint": "node -c server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
