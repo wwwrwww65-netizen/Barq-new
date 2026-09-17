@@ -26,9 +26,9 @@
     margin: 0 auto 8px;
     padding: 12px 16px;
     background: #0C1322 !important;
-    border: 1px solid rgba(223, 183, 108, 0.22) !important;
+    border: 1px solid rgba(0, 240, 255, 0.22) !important;
     border-radius: 16px !important;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 16px rgba(223, 183, 108, 0.12) !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 240, 255, 0.12) !important;
     color: #FFFFFF !important;
     animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     box-sizing: border-box;
@@ -64,12 +64,12 @@
     height: 36px;
     min-width: 36px;
     border-radius: 12px;
-    background: rgba(223, 183, 108, 0.14) !important;
+    background: rgba(0, 240, 255, 0.14) !important;
     color: #DFB76C !important;
     font-size: 18px;
     flex-shrink: 0;
-    border: 1px solid rgba(223, 183, 108, 0.35);
-    box-shadow: 0 0 10px rgba(223, 183, 108, 0.2);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
 }
 
 /* Text */
@@ -106,10 +106,10 @@
     text-decoration: none;
     font-weight: 800;
     font-size: 12.5px;
-    background: linear-gradient(135deg, #EBD09B 0%, #DFB76C 50%, #C59B4B 100%) !important;
-    color: #0A0E17 !important;
+    background: linear-gradient(135deg, #0284C7 0%, #0077FE 100%) !important;
+    color: #FFFFFF !important;
     border: none;
-    box-shadow: 0 3px 10px rgba(223, 183, 108, 0.35) !important;
+    box-shadow: 0 3px 10px rgba(0, 240, 255, 0.35) !important;
     transition: all 0.2s ease;
     flex-shrink: 0;
     white-space: nowrap;
@@ -117,7 +117,7 @@
 
 .announcement-action:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(223, 183, 108, 0.5) !important;
+    box-shadow: 0 4px 14px rgba(0, 240, 255, 0.5) !important;
     opacity: 0.98;
 }
 
@@ -127,7 +127,7 @@
     align-items: center;
     justify-content: center;
     background: #080D18 !important;
-    border: 1px solid rgba(223, 183, 108, 0.2) !important;
+    border: 1px solid rgba(0, 240, 255, 0.2) !important;
     color: #CBD5E1 !important;
     font-size: 16px;
     width: 26px;

@@ -1,7 +1,7 @@
 window.siteConfig = {
-    "siteName": "طوفان نت",
-    "network-name": "طوفان نت",
-    "subDecText": "لخدمات الإنترنت اللاسلكي",
+    "siteName": "برق نت",
+    "network-name": "برق نت",
+    "subDecText": "للإنترنت فائق السرعة اللاسلكي",
     "welcomeMessage": "مرحبا بك في شبكتنا",
     "welcomeMessageV": true,
     "erbV": false,
@@ -12,7 +12,7 @@ window.siteConfig = {
     "service-number": "784000499",
     "callPhone": "784000499",
     "whatsappPhone": "967784000499",
-    "whatsappMsg": "مرحبا خدمة عملاء شبكة طوفان نت اللاسلكية",
+    "whatsappMsg": "مرحبا خدمة عملاء شبكة برق نت اللاسلكية",
     "fixedSpeedCardPrefixes": [],
     "speed-select": 0,
     "speed-var": "speed",
@@ -152,15 +152,15 @@ window.siteConfig = {
             "validity": "شهر"
         }
     ],
-    "offersTitle": "خدمات وعروض شبكة طوفان نت 🔥",
+    "offersTitle": "خدمات وعروض شبكة برق نت 🔥",
     "offers": "مرحبا بك في شبكتنا 😍\n• تذكر ان الله ينظر اليك و خاف منه كما تخاف من ان ينظر اليك من بجانبك\n• سرعة عالية وثبات في خدمة الإنترنت اللاسلكي\n• نقاط البيع متوفرة في جميع البقالات في اماكن تغطية الشبكة",
     "offersBadge": "عرض مجاني",
     "offersBadgeV": true,
-    "offersBtnText": "📺 بث واستراحة الطوفان",
+    "offersBtnText": "📺 بث واستراحة البرق",
     "offersBtnUrl": "",
     "offersBtnV": false,
     "loan-button": false,
-    "loan-text": "أهلاً بك زائرنا في شبكة طوفان نت",
+    "loan-text": "أهلاً بك زائرنا في شبكة برق نت",
     "salesPoints": [
         "جميع البقالات في اماكن تغطية الشبكة"
     ],
