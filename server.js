@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Helper to get default speed value from config.js
 function getConfigDefaultSpeed() {
@@ -246,7 +246,7 @@ app.use('/api', (req, res) => {
 });
 
 // Default fallback to index.html for client-side navigation (non-file requests)
-app.get('{*all}', (req, res) => {
+app.use((req, res) => {
   // If requesting a file with an extension that does not exist, return 404 instead of index.html
   if (path.extname(req.path)) {
     return res.status(404).send('File Not Found');

@@ -1,6 +1,9 @@
 window.siteConfig = {
     "siteName": "برق نت",
     "network-name": "برق نت",
+    "networkLogo": "img/barq.png",
+    "logo": "img/barq.png",
+    "network-logo": "img/barq.png",
     "subDecText": "للإنترنت فائق السرعة اللاسلكي",
     "welcomeMessage": "مرحبا بك في شبكتنا",
     "welcomeMessageV": true,

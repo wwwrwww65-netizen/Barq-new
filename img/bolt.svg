@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="boltGoldGrad" x1="12" y1="4" x2="52" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFDF0" />
+      <stop offset="20%" stop-color="#FFE853" />
+      <stop offset="50%" stop-color="#FFB703" />
+      <stop offset="80%" stop-color="#FB8500" />
+      <stop offset="100%" stop-color="#FFD000" />
+    </linearGradient>
+    <linearGradient id="boltCyanGrad" x1="20" y1="4" x2="44" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#00F0FF" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0.4" />
+    </linearGradient>
+  </defs>
+  <path d="M38 4L16 35H31L23 60L49 27H33L42 4H38Z" fill="url(#boltGoldGrad)" stroke="#FFF8B5" stroke-width="1.5" stroke-linejoin="round" />
+  <path d="M38 4L24 35H31L23 60L36 35L49 27H33L42 4Z" fill="url(#boltCyanGrad)" opacity="0.6" />
+  <path d="M37 9L23 33H30L26 48L40 29H32L38 9Z" fill="#FFFFFF" opacity="0.8" />
+</svg>

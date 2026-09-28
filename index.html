@@ -99,12 +99,17 @@
                 var parts = name.split(/\s+/);
                 var prefix = parts[0] || name;
                 var suffix = parts.slice(1).join(' ');
+                var logoEl = document.getElementById('networkHeaderLogo') || document.querySelector('[data-network-logo="true"]');
+                var logoSrc = c.networkLogo || c.logo || c["network-logo"];
+                if (logoEl && logoSrc) {
+                    logoEl.src = logoSrc;
+                }
                 var prefixEl = document.querySelector('[data-network-name-prefix="true"]');
                 var suffixEl = document.querySelector('.brand-net-gold');
-                if (prefixEl) prefixEl.textContent = prefix;
+                if (prefixEl && !logoEl) prefixEl.textContent = prefix;
                 if (suffixEl) {
-                    suffixEl.textContent = suffix;
-                    suffixEl.style.display = suffix ? 'inline-block' : 'none';
+                    suffixEl.textContent = suffix || 'نت';
+                    suffixEl.style.display = 'inline-block';
                 }
 
                 // Immediate check for quran strip visibility
@@ -508,8 +513,29 @@
                             <div class="aloula-brand-col">
                                 <div class="aloula-title-wrap">
                                     <div class="aloula-title-line" id="aloulaBrandTitle">
-                                        <span class="brand-name-white">
-                                            <span class="name-text" data-network-name-prefix="true">برق</span>
+                                        <span class="brand-bolt-wrap" id="brandBoltWrap" aria-hidden="true">
+                                            <svg class="brand-bolt-icon" viewBox="14 2 37 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <defs>
+                                                    <linearGradient id="boltGrad" x1="14" y1="4" x2="50" y2="60" gradientUnits="userSpaceOnUse">
+                                                        <stop offset="0%" stop-color="#FFFDF0" />
+                                                        <stop offset="20%" stop-color="#FFE853" />
+                                                        <stop offset="50%" stop-color="#FFB703" />
+                                                        <stop offset="80%" stop-color="#FB8500" />
+                                                        <stop offset="100%" stop-color="#FFD000" />
+                                                    </linearGradient>
+                                                    <linearGradient id="boltCyanGrad" x1="20" y1="4" x2="44" y2="56" gradientUnits="userSpaceOnUse">
+                                                        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
+                                                        <stop offset="45%" stop-color="#00F0FF" stop-opacity="0.9" />
+                                                        <stop offset="100%" stop-color="#FFD700" stop-opacity="0.3" />
+                                                    </linearGradient>
+                                                </defs>
+                                                <path d="M38 4L16 35H31L23 60L49 27H33L42 4H38Z" fill="url(#boltGrad)" stroke="#FFF8B5" stroke-width="1.4" stroke-linejoin="round" />
+                                                <path d="M38 4L24 35H31L23 60L36 35L49 27H33L42 4Z" fill="url(#boltCyanGrad)" opacity="0.65" />
+                                                <path d="M37 9L23 33H30L26 48L40 29H32L38 9Z" fill="#FFFFFF" opacity="0.85" />
+                                            </svg>
+                                        </span>
+                                        <span class="brand-logo-wrap" id="brandLogoWrap">
+                                            <img src="img/barq.png" alt="شعار برق" class="brand-logo-img" id="networkHeaderLogo" data-network-logo="true" />
                                         </span>
                                         <span class="brand-net-gold">نت</span>
                                     </div>
@@ -525,6 +551,11 @@
                                     (function() {
                                         try {
                                             var cfg = window.siteConfig || {};
+                                            var logoEl = document.getElementById('networkHeaderLogo') || document.querySelector('[data-network-logo="true"]');
+                                            var logoSrc = cfg.networkLogo || cfg.logo || cfg["network-logo"];
+                                            if (logoEl && logoSrc) {
+                                                logoEl.src = logoSrc;
+                                            }
                                             var netName = cfg.siteName || (window.hotspotConfig && window.hotspotConfig["network-name"] ? window.hotspotConfig["network-name"].trim() : 'برق نت');
                                             netName = (netName || 'برق نت').trim();
                                             var parts = netName.split(/\s+/);
@@ -539,22 +570,16 @@
                                             }
                                             var prefixEl = document.querySelector('[data-network-name-prefix="true"]');
                                             var suffixEl = document.querySelector('.brand-net-gold');
-                                            if (prefixEl) prefixEl.textContent = prefix;
+                                            if (prefixEl && !logoEl) prefixEl.textContent = prefix;
                                             if (suffixEl) {
-                                                suffixEl.textContent = suffix;
-                                                suffixEl.style.display = suffix ? 'inline-block' : 'none';
+                                                suffixEl.textContent = suffix || 'نت';
+                                                suffixEl.style.display = 'inline-block';
                                             }
 
                                             // Subtitle dynamic update from config
                                             var subDecEl = document.querySelector('.sub-dec-text');
                                             if (subDecEl && cfg.subDecText) {
                                                 subDecEl.textContent = cfg.subDecText;
-                                            }
-
-                                            // Auto-fit font size if name is long (e.g. "شبكة الأولى نت")
-                                            if (prefix.length > 8) {
-                                                if (prefixEl) prefixEl.style.fontSize = 'clamp(22px, 6.5vw, 30px)';
-                                                if (suffixEl) suffixEl.style.fontSize = 'clamp(22px, 6.5vw, 30px)';
                                             }
                                         } catch (e) {}
                                     })();
@@ -3138,16 +3163,21 @@
                     }
                 });
 
-                // Update Header Brand Logo Title (Prefix and Gold Suffix)
+                // Update Header Brand Logo Title (Logo and Gold Suffix)
                 const parts = netName.trim().split(/\s+/);
                 let brandPrefix = parts[0] || netName;
                 let brandSuffix = parts.slice(1).join(' ');
+                const logoEl = document.getElementById('networkHeaderLogo') || document.querySelector('[data-network-logo="true"]');
+                const logoSrc = config.networkLogo || config.logo || config["network-logo"];
+                if (logoEl && logoSrc) {
+                    logoEl.src = logoSrc;
+                }
                 const prefixEl = document.querySelector('[data-network-name-prefix="true"]');
                 const suffixEl = document.querySelector('.brand-net-gold');
-                if (prefixEl) prefixEl.textContent = brandPrefix;
+                if (prefixEl && !logoEl) prefixEl.textContent = brandPrefix;
                 if (suffixEl) {
-                    suffixEl.textContent = brandSuffix;
-                    suffixEl.style.display = brandSuffix ? 'inline-block' : 'none';
+                    suffixEl.textContent = brandSuffix || 'نت';
+                    suffixEl.style.display = 'inline-block';
                 }
 
                 // Update Subtitle line text under brand title
@@ -3156,8 +3186,8 @@
                     subDecEl.textContent = config.subDecText;
                 }
 
-                document.querySelectorAll('.network-logo-img').forEach(img => {
-                    img.alt = `شعار شبكة ${netName}`;
+                document.querySelectorAll('.network-logo-img, .brand-logo-img').forEach(img => {
+                    img.alt = `شعار ${netName}`;
                 });
 
                 // 2. Sync Customer Support & Call Buttons
