@@ -29,18 +29,36 @@ function getConfigDefaultSpeed() {
   } catch (err) {
     console.error('Error reading default speed from config.js:', err);
   }
-  return '';
+  return 'speed_normal';
 }
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static assets from project root
-app.use(express.static(__dirname));
+// Helper for MikroTik JSON vs Browser request detection
+function isMikrotikAjax(req) {
+  return Boolean(
+    req.xhr ||
+    req.query.var !== undefined ||
+    req.body?.dst !== undefined ||
+    req.headers['x-requested-with'] ||
+    req.headers['accept']?.includes('application/json')
+  );
+}
+
+// In-memory simulation session
+let simulatedSession = {
+  logged_in: false,
+  username: '',
+  domain: '',
+  loginTime: null,
+  ip: '192.168.88.100',
+  mac: '70:85:C2:A1:3B:9E'
+};
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', app: 'toshka-hotspot' });
+  res.json({ status: 'ok', app: 'barqnet-hotspot' });
 });
 
 // Notifications & announcements public content mock endpoint
@@ -54,56 +72,17 @@ app.get('/api/v1/public/content', (req, res) => {
   });
 });
 
-// Quran info endpoint
-app.get('/api/quran/info', (req, res) => {
-  const surahsPath = path.join(__dirname, 'js', 'quran-surahs.json');
-  let surahs = [];
-  try {
-    if (fs.existsSync(surahsPath)) {
-      surahs = JSON.parse(fs.readFileSync(surahsPath, 'utf8'));
-    }
-  } catch (err) {
-    console.error('Error reading surahs file:', err);
-  }
-  res.json({
-    totalPages: 569,
-    surahs: surahs
-  });
-});
-
-// Quran page placeholder image if not found locally
-app.get('/api/quran/page/:num', (req, res) => {
-  const pageNum = req.params.num;
-  const localPagePath = path.join(__dirname, 'public', 'quran-pages', `${pageNum}.jpg`);
-  if (fs.existsSync(localPagePath)) {
-    return res.sendFile(localPagePath);
-  }
-  // Return a transparent 1x1 GIF or a placeholder SVG so image tag doesn't break
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900"><rect width="100%" height="100%" fill="#0a0f1d"/><text x="50%" y="48%" fill="#dfab52" font-family="sans-serif" font-size="24" text-anchor="middle">المصحف الشريف</text><text x="50%" y="54%" fill="#94a3b8" font-family="sans-serif" font-size="18" text-anchor="middle">صفحة ${pageNum}</text></svg>`;
-  res.setHeader('Content-Type', 'image/svg+xml');
-  res.send(svg);
-});
-
-// Quran download mock/fallback
-app.get('/download-quran', (req, res) => {
-  res.setHeader('Content-Disposition', 'attachment; filename="mobile-quran.pdf"');
-  res.setHeader('Content-Type', 'application/pdf');
-  res.send(Buffer.from('%PDF-1.4\n%empty pdf placeholder\n%%EOF'));
-});
-
-// In-memory simulation session
-let simulatedSession = {
-  logged_in: false,
-  username: '',
-  loginTime: null,
-  ip: '192.168.88.100',
-  mac: 'AA:BB:CC:DD:EE:FF'
-};
-
-// MikroTik Hotspot login mock handler for testing in preview / dev server
-app.all('/login', (req, res) => {
+// MikroTik Hotspot login mock handler
+app.all(['/login', '/login.html'], (req, res) => {
   const username = (req.query.username || req.body?.username || '').trim();
   const password = (req.query.password || req.body?.password || '').trim();
+  const isAjax = isMikrotikAjax(req);
+
+  // If a browser navigates directly to /login or /login.html without username or AJAX:
+  if (!isAjax && req.method === 'GET' && !username) {
+    return res.sendFile(path.join(__dirname, 'index.html'));
+  }
+
   res.setHeader('Content-Type', 'application/json');
 
   // Test error trigger keywords for testing error dialogs/blocker:
@@ -160,12 +139,13 @@ app.all('/login', (req, res) => {
     });
   }
 
-  // Any other card succeeds in simulation!
-  const defaultDomain = getConfigDefaultSpeed() || 'speed_normal';
+  // Standard login success simulation
+  const defaultDomain = getConfigDefaultSpeed();
   let domain = (req.query.domain || req.body?.domain || req.query.speed || req.body?.speed || simulatedSession.domain || defaultDomain || '').trim();
   if (username.startsWith('777')) {
     domain = '';
   }
+
   simulatedSession = {
     logged_in: true,
     username: username,
@@ -175,8 +155,6 @@ app.all('/login', (req, res) => {
     mac: "70:85:C2:A1:3B:9E"
   };
 
-  // Check if standard browser navigation vs AJAX
-  const isAjax = req.xhr || req.headers['accept']?.includes('json') || req.query.var !== undefined || req.body?.dst !== undefined || req.headers['x-requested-with'];
   if (!isAjax && !req.query.username) {
     return res.redirect('/?status=connected');
   }
@@ -196,25 +174,54 @@ app.all('/login', (req, res) => {
   });
 });
 
+// MikroTik Hotspot post-login handler
+app.all(['/alogin', '/alogin.html'], (req, res) => {
+  const isAjax = isMikrotikAjax(req);
+  if (isAjax) {
+    res.setHeader('Content-Type', 'application/json');
+    return res.json({
+      logged_in: simulatedSession.logged_in ? "yes" : "no",
+      username: simulatedSession.username || "770807777",
+      domain: simulatedSession.domain || getConfigDefaultSpeed(),
+      link_login_only: "http://1.1.1.1/login",
+      ip: simulatedSession.ip,
+      mac: simulatedSession.mac,
+      action: "onLoggedIn"
+    });
+  }
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // MikroTik Hotspot status JSON / HTML mock handler
-app.all('/status', (req, res) => {
-  const isAjax = req.headers.accept?.includes('application/json') || req.query.var !== undefined || req.xhr;
+app.all(['/status', '/status.html'], (req, res) => {
+  const isAjax = isMikrotikAjax(req);
   const username = req.query.username || simulatedSession.username || "770807777";
   const defaultDomain = getConfigDefaultSpeed();
   const currentSpeed = req.query.domain || req.body?.domain || simulatedSession.domain || defaultDomain || "";
 
   if (isAjax) {
     res.setHeader('Content-Type', 'application/json');
+    const elapsedSec = simulatedSession.loginTime ? Math.max(1, Math.floor((Date.now() - simulatedSession.loginTime) / 1000)) : 13500;
+    const hours = Math.floor(elapsedSec / 3600);
+    const minutes = Math.floor((elapsedSec % 3600) / 60);
+    const seconds = elapsedSec % 60;
+    const uptimeStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m ${seconds}s`;
+
+    const bytesInNum = 194412544 + elapsedSec * 15360;
+    const bytesOutNum = 936017920 + elapsedSec * 61440;
+    const bytesInNice = (bytesInNum / (1024 * 1024)).toFixed(1) + " MB";
+    const bytesOutNice = (bytesOutNum / (1024 * 1024)).toFixed(1) + " MB";
+
     return res.json({
       logged_in: "yes",
       username: username,
       ip: simulatedSession.ip,
       mac: simulatedSession.mac,
-      bytes_in: "194412544",
-      bytes_out: "936017920",
-      bytes_in_nice: "185.4 MB",
-      bytes_out_nice: "892.6 MB",
-      uptime: "3h 45m",
+      bytes_in: String(bytesInNum),
+      bytes_out: String(bytesOutNum),
+      bytes_in_nice: bytesInNice,
+      bytes_out_nice: bytesOutNice,
+      uptime: uptimeStr,
       remain_bytes_total: "3435973836",
       session_time_left: "6d 12h",
       domain: currentSpeed,
@@ -229,11 +236,11 @@ app.all('/status', (req, res) => {
 });
 
 // MikroTik Hotspot logout mock handler
-app.all('/logout', (req, res) => {
+app.all(['/logout', '/logout.html'], (req, res) => {
   simulatedSession.logged_in = false;
   simulatedSession.username = '';
-  
-  const isAjax = req.headers.accept?.includes('application/json') || req.query.var !== undefined || req.xhr;
+
+  const isAjax = isMikrotikAjax(req);
   if (isAjax) {
     res.setHeader('Content-Type', 'application/json');
     return res.json({
@@ -244,6 +251,14 @@ app.all('/logout', (req, res) => {
   res.redirect('/');
 });
 
+// MikroTik redirect handler
+app.all(['/redirect', '/redirect.html'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Serve static assets from project root (cards.html, dash.html, estraha.html, css/, js/, img/, fonts/, etc.)
+app.use(express.static(__dirname));
+
 // Return JSON 404 for unmatched /api/* requests
 app.use('/api', (req, res) => {
   res.status(404).json({ error: 'API endpoint not found' });
@@ -251,7 +266,6 @@ app.use('/api', (req, res) => {
 
 // Default fallback to index.html for client-side navigation (non-file requests)
 app.use((req, res) => {
-  // If requesting a file with an extension that does not exist, return 404 instead of index.html
   if (path.extname(req.path)) {
     return res.status(404).send('File Not Found');
   }

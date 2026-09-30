@@ -1,7 +1,7 @@
 {
-  "name": "toshka-hotspot",
+  "name": "barqnet-hotspot",
   "version": "1.0.0",
-  "description": "شبكة توشكا نت - بوابة الهوتسبوت",
+  "description": "بوابة تسجيل الدخول وشبكة برق نت للاتصالات والإنترنت اللاسلكي",
   "type": "module",
   "scripts": {
     "dev": "node server.js",

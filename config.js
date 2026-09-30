@@ -202,16 +202,14 @@ window.siteConfig = {
             "name": "تطبيق برق وايفاي"
         }
     ],
-    "estr": "http://10.10.10.10:8096/",
+    "estr": "http://40.10.10.10",
     "estrV": true,
     "moba": "http://40.10.10.10/liveStream/",
     "mobaV": true,
-    "redirect-to-esterahah": "http://10.10.10.10:8096/",
+    "redirect-to-esterahah": "http://40.10.10.10",
     "redirect-to-mobasher": "http://40.10.10.10/liveStream/",
     "app-store-status-button": false,
     "app-store-base-url": "",
-    "quranUrl": "",
-    "quranV": false,
     "updatesBlockerV": true,
     "enable-updates-blocker": 1,
     "enableHotCookie": true,
