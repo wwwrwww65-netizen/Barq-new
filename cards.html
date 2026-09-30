@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<title>قوالب كروت الشبكة • A4</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{
+    /* ===== إعدادات عامة ===== */
+    --page-bg: #0b1220;
+    --cut: #a3b3ff55;
+    --ink: #0b1220;
+    --paper: #ffffff;
+
+    /* ألوان العلامة */
+    --brand1:#7c3aed;    /* بنفسجي */
+    --brand2:#22d3ee;    /* سماوي */
+    --accent:#00ffc6;    /* نعناع */
+
+    /* أبعاد الكرت (مم) وعددها في الصفحة */
+    --card-w-mm: 85;     /* العرض */
+    --card-h-mm: 55;     /* الارتفاع */
+    --cols: 3;           /* بطاقات في الصف */
+    --rows: 4;           /* صفوف */
+    --gap-mm: 6;         /* مسافة بين البطاقات */
+
+    /* حواف داخلية للكرت */
+    --pad: 10px;
+    --radius: 10px;
+
+    /* خط */
+    --font: system-ui, -apple-system, "Tajawal", "Cairo", Segoe UI, Arial, sans-serif;
+  }
+
+  /* تحويل مم إلى بكسل عند العرض، والطباعة ستكون بدون حدود عبر Printer */
+  @media screen {
+    .sheet{ padding: 10mm; background: var(--page-bg); }
+  }
+
+  /* لإلغاء هوامش الطباعة */
+  @page { size: A4; margin: 0; }
+
+  body{ margin:0; background:var(--page-bg); font-family:var(--font); }
+
+  .toolbar{
+    position:sticky; top:0; z-index:999;
+    display:flex; gap:8px; align-items:center; justify-content:space-between;
+    padding:10px 12px; background:#0e1426; color:#eaf0ff; border-bottom:1px solid #1c2644;
+  }
+  .toolbar b{ font-weight:800 }
+  .toolbar button{
+    padding:8px 12px; border:1px solid #334; border-radius:10px; background:#151e38; color:#eaf0ff; cursor:pointer;
+  }
+  .toolbar button:hover{ background:#1b2544 }
+
+  .sheet{
+    width: 210mm; height: 297mm; box-sizing: border-box; margin: 0 auto;
+    display:grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-auto-rows: 1fr;
+    gap: calc(var(--gap-mm) * 1mm);
+    align-content:center; justify-items:center;
+  }
+
+  .card-wrap{
+    width: calc(var(--card-w-mm) * 1mm);
+    height: calc(var(--card-h-mm) * 1mm);
+    position: relative;
+  }
+
+  /* علامات القص */
+  .card-wrap:before, .card-wrap:after{
+    content:""; position:absolute; pointer-events:none; inset:0;
+    background:
+      /* أركان خارجية خفيفة */
+      linear-gradient(var(--cut), var(--cut)) top left/ 12px 1px no-repeat,
+      linear-gradient(var(--cut), var(--cut)) top left/ 1px 12px no-repeat,
+      linear-gradient(var(--cut), var(--cut)) top right/ 12px 1px no-repeat,
+      linear-gradient(var(--cut), var(--cut)) top right/ 1px 12px no-repeat,
+      linear-gradient(var(--cut), var(--cut)) bottom left/ 12px 1px no-repeat,
+      linear-gradient(var(--cut), var(--cut)) bottom left/ 1px 12px no-repeat,
+      linear-gradient(var(--cut), var(--cut)) bottom right/ 12px 1px no-repeat,
+      linear-gradient(var(--cut), var(--cut)) bottom right/ 1px 12px no-repeat;
+  }
+
+  .card{
+    position:absolute; inset:0; border-radius: var(--radius);
+    background:
+      radial-gradient(120% 120% at 15% 10%, #ffffff26 0, transparent 45%),
+      radial-gradient(120% 140% at 90% 80%, #ffffff1f 0, transparent 45%),
+      linear-gradient(135deg, #f8fbff, #f2f6ff);
+    /* حدود لامعة داخلية */
+    box-shadow:
+      0 10px 28px rgba(0,0,0,.15),
+      inset 0 0 0 2px #e7ecff;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+
+  /* شريط علوي ملون بالعلامة */
+  .bar{
+    height: 26px; position:relative;
+    background: linear-gradient(90deg, var(--brand1), var(--brand2), var(--accent));
+  }
+
+  .logo{
+    position:absolute; inset:auto 10px auto auto; top:50%; transform:translateY(-50%);
+    display:flex; align-items:center; gap:8px; color:#ffffff; text-shadow:0 2px 8px rgba(0,0,0,.25);
+    font-weight:800; letter-spacing:.2px;
+  }
+  .logo i{ width:16px; height:16px; border-radius:50%; background:#fff8; display:inline-block }
+
+  .content{
+    flex:1; display:grid; grid-template-columns: 1fr 1fr; gap:6px; padding: var(--pad);
+  }
+  .left, .right{ display:flex; flex-direction:column; gap:6px; }
+
+  .title{
+    font-weight:800; font-size:14px; color:#10193a; margin-bottom:2px;
+  }
+  .kv{ display:flex; align-items:center; gap:6px; }
+  .kv label{
+    font-size:11px; color:#2c355a; min-width:76px;
+  }
+  .kv b{
+    font-size:12px; color:#0a1636; background:#eef3ff; border:1px solid #dfe7ff; border-radius:7px; padding:4px 8px;
+  }
+
+  .holo{
+    margin-top:auto;
+    height: 28px; border-radius:8px;
+    background:
+      linear-gradient(120deg, #a7f3d0 0%, #93c5fd 40%, #e9d5ff 70%, #a7f3d0 100%);
+    opacity:.7; filter: saturate(1.2);
+    box-shadow: inset 0 0 0 1px #ffffffaa;
+  }
+
+  .qr{
+    width:64px; height:64px; background:#eef3ff; border:1px solid #dfe7ff; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; color:#9aa7d1; font-size:10px;
+    overflow:hidden;
+  }
+  .qr img{ width:100%; height:100%; object-fit:cover }
+
+  .footer{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding: 4px 8px 8px; font-size:10.5px; color:#2b355c;
+  }
+  .serial{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace; font-weight:700; }
+  .brand-chip{
+    padding:3px 8px; border-radius:999px; font-weight:800; color:#041221;
+    background: linear-gradient(135deg, var(--accent), #7df6ff);
+    box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  }
+
+  /* للعرض فقط */
+  .note{ color:#cfe0ff; font-size:13px; opacity:.9 }
+
+  @media print{
+    .toolbar{ display:none !important; }
+    body{ background:#fff; }
+    .sheet{ background:#fff; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== شريط أدوات سريع (لن يظهر في الطباعة) ===== -->
+<div class="toolbar">
+  <div>
+    <b>قوالب الكروت</b>
+    <span class="note">A4 • قصّات • 3 أوضاع (اسم فقط، = كلمة المرور، مختلفين)</span>
+  </div>
+  <div>
+    <button onclick="cycleMode()">وضع الكرت: <span id="modeLabel"></span></button>
+    <button onclick="window.print()">طباعة</button>
+  </div>
+</div>
+
+<!-- ===== صفحة A4 ===== -->
+<div class="sheet" id="sheet"></div>
+
+<script>
+/* ================== الإعدادات ================== */
+const SETTINGS = {
+  networkName: 'لمسات نت',
+  hotline: '772007475',
+  developer: 'LamSoft • 777000000',
+  // أوضاع الكرت: 'USERNAME_ONLY' | 'USER_EQUALS_PASS' | 'DIFF'
+  MODE: 'USER_EQUALS_PASS',
+
+  // حجم الشبكة في الصفحة:
+  COLS: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cols')) || 3,
+  ROWS: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--rows')) || 4,
+
+  // رابط QR اختياري، اتركه فارغًا لإظهار مربع رمادي
+  qrBase: '', // مثال: 'https://example.com/redeem?c='
+};
+
+/* بيانات أمثلة — استبدلها ببياناتك الحقيقية أو ولدها من الخادم */
+const SAMPLE_CARDS = [
+  { user:'LS-1001', pass:'LS-1001', time:'5 ساعات', cap:'300 ميجا', validity:'5 أيام', price:'100 ر.ي', serial:'A-000001' },
+  { user:'LS-1250', pass:'LS-1250', time:'15 ساعة', cap:'700 ميجا', validity:'6 أيام', price:'250 ر.ي', serial:'A-000002' },
+  { user:'LS-1500', pass:'P-9Q2K7', time:'24 ساعة', cap:'1600 ميجا', validity:'8 أيام', price:'500 ر.ي', serial:'A-000003' },
+  { user:'LS-2000', pass:'P-1XY8B', time:'3 أيام', cap:'غير محدود', validity:'3 أيام', price:'2,000 ر.ي', serial:'A-000004' },
+  { user:'LS-7D',   pass:'LS-7D',  time:'يومي', cap:'1.5 جيجا', validity:'7 أيام', price:'1,500 ر.ي', serial:'A-000005' },
+  { user:'LS-30D',  pass:'ABCD12', time:'شهري', cap:'10 جيجا', validity:'30 يوم', price:'6,000 ر.ي', serial:'A-000006' },
+];
+
+/* مولد بيانات يكمل الصفحة كلها */
+function fillToPage(data){
+  const need = SETTINGS.COLS * SETTINGS.ROWS;
+  const out = [];
+  let i=0;
+  while(out.length < need){
+    out.push({ ...data[i % data.length] });
+    i++;
+  }
+  return out;
+}
+
+/* تنسيق QR إن وجد */
+function makeQRSrc(card){
+  if(!SETTINGS.qrBase) return '';
+  const payload = `${card.user}|${card.pass}|${card.serial}`;
+  return SETTINGS.qrBase + encodeURIComponent(payload);
+}
+
+/* تسمية الوضع */
+function labelOfMode(mode){
+  if(mode==='USERNAME_ONLY') return 'اسم فقط';
+  if(mode==='USER_EQUALS_PASS') return 'اسم = كلمة المرور';
+  return 'اسم + كلمة مرور';
+}
+
+/* تبديل الوضع من الزر */
+function cycleMode(){
+  const order = ['USERNAME_ONLY','USER_EQUALS_PASS','DIFF'];
+  let i = order.indexOf(SETTINGS.MODE);
+  SETTINGS.MODE = order[(i+1)%order.length];
+  document.getElementById('modeLabel').textContent = labelOfMode(SETTINGS.MODE);
+  render();
+}
+
+/* بناء بطاقة DOM واحدة */
+function cardHTML(card){
+  // حسب الوضع
+  let passShow = '';
+  if(SETTINGS.MODE === 'USER_EQUALS_PASS'){ passShow = card.user; }
+  else if(SETTINGS.MODE === 'USERNAME_ONLY'){ passShow = ''; }
+  else { passShow = card.pass; }
+
+  const qrSrc = makeQRSrc(card);
+
+  return `
+  <div class="card-wrap">
+    <div class="card">
+      <div class="bar">
+        <div class="logo">
+          <i></i><span>${SETTINGS.networkName}</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="left">
+          <div class="title">بيانات الدخول</div>
+          <div class="kv"><label>اسم المستخدم:</label><b>${card.user}</b></div>
+          ${SETTINGS.MODE==='USERNAME_ONLY' ? '' : `<div class="kv"><label>كلمة المرور:</label><b>${passShow}</b></div>`}
+          <div class="kv"><label>الوقت:</label><b>${card.time}</b></div>
+          <div class="kv"><label>الحجم:</label><b>${card.cap}</b></div>
+          <div class="kv"><label>الصلاحية:</label><b>${card.validity}</b></div>
+          <div class="kv"><label>السعر:</label><b>${card.price}</b></div>
+          <div class="holo"></div>
+        </div>
+
+        <div class="right" style="align-items:flex-end">
+          <div class="qr">
+            ${qrSrc ? `<img src="${qrSrc}" alt="QR">` : `<span>QR</span>`}
+          </div>
+          <div class="kv" style="margin-top:auto">
+            <label>الدعم:</label><b>📞 ${SETTINGS.hotline}</b>
+          </div>
+          <div class="kv">
+            <label>المبرمج:</label><b>${SETTINGS.developer}</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <span class="serial">S/N: ${card.serial}</span>
+        <span class="brand-chip">${SETTINGS.networkName}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* الرسم الكامل للورقة */
+function render(){
+  const sheet = document.getElementById('sheet');
+  sheet.innerHTML = fillToPage(SAMPLE_CARDS).map(cardHTML).join('');
+  document.getElementById('modeLabel').textContent = labelOfMode(SETTINGS.MODE);
+}
+
+/* بدء */
+render();
+</script>
+</body>
+</html>

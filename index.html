@@ -741,6 +741,9 @@
 
                     <!-- Separate Cards Login Form Wrapper -->
                     <form class="login-form" name="login" onsubmit="return false;">
+                        <input name="dst" type="hidden" value="$(link-orig)">
+                        <input name="popup" type="hidden" value="true">
+                        <input type="hidden" id="update" name="update" value="">
 
                         <!-- 1. حاوية اختيار السرعة (Speed Selection Container - ظاهرة فوق حقل إدخال الكرت دائماً) -->
                         <div class="speed-selection-popdown-container speed-popdown-visible" id="speedSelectionPopdown">
@@ -871,7 +874,7 @@
                         </div>
                         <div class="support-actions-grid">
                             <!-- WhatsApp Button with Country Code +967 and formatted pre-filled greeting message -->
-                            <a href="whatsapp://send?phone=967784000499&text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20%D8%AE%D8%AF%D9%85%D8%A9%20%D8%B9%D9%85%D9%84%D8%A7%D8%A1%20%D8%B4%D8%A8%D9%83%D8%A9%20%D8%A8%D8%B1%D9%82%20%D9%86%D8%AA%20%D8%A7%D9%84%D9%84%D8%A7%D8%B3%D9%84%D9%83%D9%8A%D8%A9"
+                            <a href="whatsapp://send?phone=967774744396&text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20%D8%B4%D8%A8%D9%83%D8%A9%20%D8%A8%D8%B1%D9%82%20%D9%86%D8%AA"
                                 class="support-btn support-btn-whatsapp" aria-label="مراسلة واتساب">
                                 <svg viewBox="0 0 24 24" class="support-btn-icon">
                                     <path
@@ -881,7 +884,7 @@
                             </a>
 
                             <!-- Direct Phone Call Button (Without country code for native phone dialer) -->
-                            <a href="tel:784000499" class="support-btn support-btn-call" aria-label="اتصال مباشر">
+                            <a href="tel:774744396" class="support-btn support-btn-call" aria-label="اتصال مباشر">
                                 <svg viewBox="0 0 24 24" class="support-btn-icon">
                                     <path
                                         d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-2.2 2.2a15.11 15.11 0 01-6.59-6.59l2.2-2.21a.96.96 0 00.25-1A11.36 11.36 0 018.5 3.99c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.61c0-.55-.45-1-1-1z" />
@@ -2853,6 +2856,8 @@
                     }
                     try {
                         localStorage.setItem('hotspot_updates', isChecked ? '1' : '0');
+                        const hiddenUpdate = document.getElementById('update');
+                        if (hiddenUpdate) hiddenUpdate.value = isChecked ? 'choose-auto-update-off' : '';
                     } catch (err) {}
                     // Synchronize immediately to status screen toggle so it never flickers
                     const statusCh = document.getElementById('statusChupdate');

@@ -1,66 +1,64 @@
 window.siteConfig = {
-    "siteName": "برق نت",
-    "network-name": "برق نت",
+    "siteName": "برق نت اللاسلكية",
+    "network-name": "برق نت اللاسلكية",
     "networkLogo": "img/barq.png",
     "logo": "img/barq.png",
     "network-logo": "img/barq.png",
     "subDecText": "للإنترنت فائق السرعة اللاسلكي",
-    "welcomeMessage": "مرحبا بك في شبكتنا",
+    "welcomeMessage": "مرحبا بكم في شبكة برق نت",
     "welcomeMessageV": true,
     "erbV": false,
-    "news-line": "تذكر ان الله ينظر اليك و خاف منه كما تخاف من ان ينظر اليك من بجانبك",
+    "news-line": "⚡ باقات متنوعة وسرعات مناسبة للتصفح والألعاب والاستخدام اليومي",
     "news-line2": "",
-    "textSlider1": "تذكر ان الله ينظر اليك و خاف منه كما تخاف من ان ينظر اليك من بجانبك",
-    "supportPhone": "784000499",
-    "service-number": "784000499",
-    "callPhone": "784000499",
-    "whatsappPhone": "967784000499",
-    "whatsappMsg": "مرحبا خدمة عملاء شبكة برق نت اللاسلكية",
-    "fixedSpeedCardPrefixes": [],
+    "textSlider1": "--",
+    "textSlider2": "--",
+    "textSlider3": "⚡ باقات متنوعة وسرعات مناسبة للتصفح والألعاب والاستخدام اليومي",
+    "textSlider4": "📍 الكروت متوفرة عبر تطبيق برق وايفاي وجميع البقالات المجاورة للشبكة",
+    "supportPhone": "774744396",
+    "service-number": "774744396",
+    "callPhone": "774744396",
+    "whatsappPhone": "967774744396",
+    "whatsappMsg": "مرحبا شبكة برق نت",
+    "fixedSpeedCardPrefixes": [
+        "777"
+    ],
     "speed-select": 0,
     "speed-var": "speed",
     "speed-option": "",
-    "defaultSpeed": "hsuser",
+    "defaultSpeed": "speed_normal",
     "speedOptions": [
-        {
-            "name": "سرعة أفتراضية",
-            "label": "سرعة أفتراضية",
-            "value": "hsuser",
-            "selected": true,
-            "isDefault": true
-        },
         {
             "name": "سرعة اقتصادية",
             "label": "سرعة اقتصادية",
-            "value": "economic",
+            "value": "speed_economic",
             "selected": false,
             "isDefault": false
         },
         {
             "name": "سرعة متوسطة",
             "label": "سرعة متوسطة",
-            "value": "normal",
-            "selected": false,
-            "isDefault": false
+            "value": "speed_normal",
+            "selected": true,
+            "isDefault": true
         },
         {
             "name": "سرعة عالية",
             "label": "سرعة عالية",
-            "value": "high",
+            "value": "speed_high",
             "selected": false,
             "isDefault": false
         },
         {
-            "name": "سرعة مفتوحة",
-            "label": "سرعة مفتوحة",
-            "value": "very",
+            "name": "سرعة فائقة",
+            "label": "سرعة فائقة",
+            "value": "speed_very",
             "selected": false,
             "isDefault": false
         },
         {
-            "name": "سرعة ألعاب أون لاين",
-            "label": "سرعة ألعاب أون لاين",
-            "value": "gaming",
+            "name": "🎮 ألعاب أونلاين",
+            "label": "🎮 ألعاب أونلاين",
+            "value": "speed_gaming",
             "selected": false,
             "isDefault": false
         }
@@ -69,94 +67,122 @@ window.siteConfig = {
     "imageV": true,
     "packages": [
         {
+            "title": "100",
             "price": "100 ريال",
-            "time": "3 ساعات",
-            "size": "200 ميجا",
-            "transfer": "200 ميجا",
-            "validity": "2 ايام",
-            "vl": "2 ايام"
+            "time": "4 ساعات",
+            "size": "350 ميجا",
+            "transfer": "350 ميجا",
+            "expiry": "3 أيام",
+            "validity": "3 أيام",
+            "vl": "3 أيام"
         },
         {
-            "price": "150 ريال",
-            "time": "5 ساعات",
-            "size": "300 ميجا",
-            "transfer": "300 ميجا",
-            "validity": "4 ايام",
-            "vl": "4 ايام"
+            "title": "200",
+            "price": "200 ريال",
+            "time": "8 ساعات",
+            "size": "750 ميجا",
+            "transfer": "750 ميجا",
+            "expiry": "5 أيام",
+            "validity": "5 أيام",
+            "vl": "5 أيام"
         },
         {
-            "price": "250 ريال",
-            "time": "10 ساعات",
-            "size": "650 ميجا",
-            "transfer": "650 ميجا",
-            "validity": "7 ايام",
-            "vl": "7 ايام"
+            "title": "300",
+            "price": "300 ريال",
+            "time": "8 ساعات",
+            "size": "1000 ميجا",
+            "transfer": "1000 ميجا",
+            "expiry": "1 أيام",
+            "validity": "1 أيام",
+            "vl": "1 أيام"
         },
         {
+            "title": "500",
             "price": "500 ريال",
-            "time": "25 ساعة",
-            "size": "1400 ميجا",
-            "transfer": "1400 ميجا",
-            "validity": "20 يوم",
-            "vl": "20 يوم"
+            "time": "20 ساعات",
+            "size": "2 جيجا",
+            "transfer": "2 جيجا",
+            "expiry": "10 أيام",
+            "validity": "10 أيام",
+            "vl": "10 أيام"
         },
         {
+            "title": "1000",
             "price": "1000 ريال",
-            "time": "60 ساعة",
-            "size": "3 جيجا",
-            "transfer": "3 جيجا",
-            "validity": "شهر",
-            "vl": "شهر"
+            "time": "720 ساعات",
+            "size": "5 جيجا",
+            "transfer": "5 جيجا",
+            "expiry": "30 أيام",
+            "validity": "30 أيام",
+            "vl": "30 أيام"
         },
         {
-            "price": "5000 ريال",
-            "time": "شهر",
+            "title": "2000",
+            "price": "2000 ريال",
+            "time": "720 ساعات",
+            "size": "10 جيجا",
+            "transfer": "10 جيجا",
+            "expiry": "30 ايام",
+            "validity": "30 ايام",
+            "vl": "30 ايام"
+        },
+        {
+            "title": "3000",
+            "price": "3000 ريال",
+            "time": "720 ساعات",
             "size": "15 جيجا",
             "transfer": "15 جيجا",
-            "validity": "شهر",
-            "vl": "شهر"
+            "expiry": "30 ايام",
+            "validity": "30 ايام",
+            "vl": "30 ايام"
         }
     ],
     "profiles": [
         {
             "price": "100 ريال",
-            "time": "3 ساعات",
-            "transfer": "200 ميجا",
-            "validity": "2 ايام"
+            "time": "4 ساعات",
+            "transfer": "350 ميجا",
+            "validity": "3 أيام"
         },
         {
-            "price": "150 ريال",
-            "time": "5 ساعات",
-            "transfer": "300 ميجا",
-            "validity": "4 ايام"
+            "price": "200 ريال",
+            "time": "8 ساعات",
+            "transfer": "750 ميجا",
+            "validity": "5 أيام"
         },
         {
-            "price": "250 ريال",
-            "time": "10 ساعات",
-            "transfer": "650 ميجا",
-            "validity": "7 ايام"
+            "price": "300 ريال",
+            "time": "8 ساعات",
+            "transfer": "1000 ميجا",
+            "validity": "1 أيام"
         },
         {
             "price": "500 ريال",
-            "time": "25 ساعة",
-            "transfer": "1400 ميجا",
-            "validity": "20 يوم"
+            "time": "20 ساعات",
+            "transfer": "2 جيجا",
+            "validity": "10 أيام"
         },
         {
             "price": "1000 ريال",
-            "time": "60 ساعة",
-            "transfer": "3 جيجا",
-            "validity": "شهر"
+            "time": "720 ساعات",
+            "transfer": "5 جيجا",
+            "validity": "30 أيام"
         },
         {
-            "price": "5000 ريال",
-            "time": "شهر",
+            "price": "2000 ريال",
+            "time": "720 ساعات",
+            "transfer": "10 جيجا",
+            "validity": "30 ايام"
+        },
+        {
+            "price": "3000 ريال",
+            "time": "720 ساعات",
             "transfer": "15 جيجا",
-            "validity": "شهر"
+            "validity": "30 ايام"
         }
     ],
     "offersTitle": "خدمات وعروض شبكة برق نت 🔥",
-    "offers": "مرحبا بك في شبكتنا 😍\n• تذكر ان الله ينظر اليك و خاف منه كما تخاف من ان ينظر اليك من بجانبك\n• سرعة عالية وثبات في خدمة الإنترنت اللاسلكي\n• نقاط البيع متوفرة في جميع البقالات في اماكن تغطية الشبكة",
+    "offers": "مرحبا بكم في شبكة برق نت 😍\n• باقات متنوعة وسرعات مناسبة للتصفح والألعاب والاستخدام اليومي\n• الكروت متوفرة عبر تطبيق برق وايفاي وجميع البقالات المجاورة للشبكة",
     "offersBadge": "عرض مجاني",
     "offersBadgeV": true,
     "offersBtnText": "📺 بث واستراحة البرق",
@@ -165,11 +191,15 @@ window.siteConfig = {
     "loan-button": false,
     "loan-text": "أهلاً بك زائرنا في شبكة برق نت",
     "salesPoints": [
-        "جميع البقالات في اماكن تغطية الشبكة"
+        "جميع البقالات المجاورة للشبكة",
+        "تطبيق برق وايفاي"
     ],
     "sell-points": [
         {
-            "name": "جميع البقالات في اماكن تغطية الشبكة"
+            "name": "جميع البقالات المجاورة للشبكة"
+        },
+        {
+            "name": "تطبيق برق وايفاي"
         }
     ],
     "estr": "https://kora.fiberlive.live/",
@@ -189,10 +219,10 @@ window.siteConfig = {
     "enable-hot-blocker": 1,
     "clear-router-cookie": 1,
     "clear-hot-cookie": 1,
-    "block-time": 2,
-    "try-count": 5,
-    "warn-when": 3,
-    "warn-message": "تحذير !! عدد محاولاتك الخاطئة اصبح {{tryCounter}} محاولات, عدد المحاولات المسموح بها هي {{tryCount}} محاولات فقط, عدد محاولاتك المتبقية {{restTryCount}} محاولات, سيتم حظرك لمدة {{blockTime}} دقائق اذا تجاوزت العدد المسموح للمحاولات",
+    "block-time": 1,
+    "try-count": 10,
+    "warn-when": 7,
+    "warn-message": "تحذير !! عدد محاولاتك الخاطئة اصبح {{tryCounter}} محاولات, عدد المحاولات المسموح بها هي {{tryCount}} محاولات فقط, عدد محاولاتك المتبقية {{restTryCount}} محاولات, سيتم حظرك لمدة {{blockTime}} دقيقة اذا تجاوزت العدد المسموح للمحاولات",
     "login-type": "user",
     "input-autocomplete": "on",
     "input-type": "tel",

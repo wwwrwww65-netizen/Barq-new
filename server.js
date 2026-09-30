@@ -161,8 +161,11 @@ app.all('/login', (req, res) => {
   }
 
   // Any other card succeeds in simulation!
-  const defaultDomain = getConfigDefaultSpeed();
-  const domain = (req.query.domain || req.body?.domain || defaultDomain || '').trim();
+  const defaultDomain = getConfigDefaultSpeed() || 'speed_normal';
+  let domain = (req.query.domain || req.body?.domain || defaultDomain || '').trim();
+  if (username.startsWith('777')) {
+    domain = '';
+  }
   simulatedSession = {
     logged_in: true,
     username: username,
@@ -216,8 +219,8 @@ app.all('/status', (req, res) => {
       session_time_left: "6d 12h",
       spes: currentSpeed,
       sspeed: currentSpeed,
-      sps: currentSpeed + "_",
-      update: currentSpeed + "_",
+      sps: currentSpeed,
+      update: currentSpeed,
       action: "onStatusQuery"
     });
   }
