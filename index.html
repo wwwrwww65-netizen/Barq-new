@@ -1020,8 +1020,20 @@
                                         pill.classList.add("active");
                                         var val = pill.getAttribute("data-speed");
                                         var title = pill.getAttribute("data-speed-title");
-                                        if (speedSel) speedSel.value = val;
+                                        if (speedSel) {
+                                            speedSel.value = val;
+                                            speedSel.dispatchEvent(new Event("change", { bubbles: true }));
+                                        }
                                         if (speedDisp) speedDisp.textContent = title;
+                                        try {
+                                            localStorage.setItem("hotspot_speed", val);
+                                            localStorage.setItem("hotspot_speed_name", title);
+                                            document.cookie = "hotspot_speed=" + encodeURIComponent(val) + "; path=/; max-age=2592000";
+                                            document.cookie = "speed=" + encodeURIComponent(val) + "; path=/; max-age=2592000";
+                                        } catch (e) {}
+                                        if (typeof window.syncStatusScreenInitialValues === "function") {
+                                            window.syncStatusScreenInitialValues();
+                                        }
                                         scrollToActivePill();
                                         // sync modal list too
                                         var modalCards = document.querySelectorAll("#speedModalList .speed-card-option");
@@ -1057,8 +1069,20 @@
                                         card.classList.add("active");
                                         var val = card.getAttribute("data-speed");
                                         var title = card.getAttribute("data-speed-title");
-                                        if (speedSel) speedSel.value = val;
+                                        if (speedSel) {
+                                            speedSel.value = val;
+                                            speedSel.dispatchEvent(new Event("change", { bubbles: true }));
+                                        }
                                         if (speedDisp) speedDisp.textContent = title;
+                                        try {
+                                            localStorage.setItem("hotspot_speed", val);
+                                            localStorage.setItem("hotspot_speed_name", title);
+                                            document.cookie = "hotspot_speed=" + encodeURIComponent(val) + "; path=/; max-age=2592000";
+                                            document.cookie = "speed=" + encodeURIComponent(val) + "; path=/; max-age=2592000";
+                                        } catch (e) {}
+                                        if (typeof window.syncStatusScreenInitialValues === "function") {
+                                            window.syncStatusScreenInitialValues();
+                                        }
                                         // sync pills too
                                         var pills = document.querySelectorAll("#speedPillsRow .speed-pill-btn");
                                         pills.forEach(function (p) {
@@ -1430,7 +1454,7 @@
 
                         <!-- Entertainment Direct Links (Live Broadcast & Lounge/Break) -->
                         <div class="entertainment-links" id="entertainmentLinks" style="display: flex; flex-direction: row; gap: 10px; width: 100%; margin: 14px 0;">
-                            <a class="stream-card-link live-stream-btn" href="https://kor.fntvs.net/channel.php" target="_blank" rel="noopener noreferrer" id="liveBroadcastLink" data-mobasher>
+                            <a class="stream-card-link live-stream-btn" href="http://40.10.10.10/liveStream/" id="liveBroadcastLink" data-mobasher>
                                 <span class="live-dot-pulse"></span>
                                 <svg viewBox="0 0 24 24">
                                     <path
@@ -1438,7 +1462,7 @@
                                 </svg>
                                 <span>البث المباشر</span>
                             </a>
-                            <a class="stream-card-link estr-card-link lounge-btn" href="#" target="_blank" rel="noopener noreferrer" id="loungeLink" data-estr style="display: none;">
+                            <a class="stream-card-link estr-card-link lounge-btn" href="http://10.10.10.10:8096/" id="loungeLink" data-estr style="display: none;">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z" />
                                 </svg>
@@ -3205,10 +3229,30 @@
                 });
 
                 // Sync News / Ticker
-                const newsText = config.textSlider1 || (window.hotspotConfig && window.hotspotConfig["news-line"]) || 'بسم الله الرحمن الرحيم { قل للمؤمنين يغضوا من أبصارهم ويحفظوا فروجهم ذلك أزكى لهم إن الله خبير بما يصنعون } (النور:30)';
+                const rawSlides = [
+                    config['news-line'],
+                    config.textSlider1,
+                    config.textSlider2,
+                    config.textSlider3,
+                    config.textSlider4
+                ].filter(t => t && typeof t === 'string' && t.trim() !== '' && t.trim() !== '--');
+
+                const validSlides = [];
+                rawSlides.forEach(t => {
+                    const clean = t.trim();
+                    if (!validSlides.includes(clean)) validSlides.push(clean);
+                });
+
+                const newsText = validSlides.length > 0
+                    ? validSlides.join('   ★   ')
+                    : '⚡ باقات متنوعة وسرعات مناسبة للتصفح والألعاب والاستخدام اليومي ★ 📍 الكروت متوفرة عبر تطبيق برق وايفاي وجميع البقالات المجاورة للشبكة';
+
                 document.querySelectorAll('[data-news-line]').forEach(p => {
                     p.innerText = newsText;
                 });
+                if (typeof setupMarquee === 'function') {
+                    setupMarquee();
+                }
 
                 // 3. Sync WhatsApp links
                 const waScheme = `whatsapp://send?phone=${waPhone}&text=${encodedWaMsg}`;
@@ -3277,6 +3321,8 @@
                 document.querySelectorAll('[data-mobasher]').forEach(el => {
                     if (isMobaEnabled) {
                         el.href = config.moba.trim();
+                        el.removeAttribute('target');
+                        el.removeAttribute('rel');
                         const span = el.querySelector('span');
                         if (span) span.textContent = 'البث المباشر';
                         el.style.setProperty('display', 'flex', 'important');
@@ -3288,6 +3334,8 @@
                 document.querySelectorAll('[data-estr]').forEach(el => {
                     if (isEstrEnabled) {
                         el.href = config.estr.trim();
+                        el.removeAttribute('target');
+                        el.removeAttribute('rel');
                         const span = el.querySelector('span');
                         if (span) span.textContent = 'الإستراحة';
                         el.style.setProperty('display', 'flex', 'important');
@@ -3348,7 +3396,7 @@
 
                 const customQuranUrl = (config.quranUrl && typeof config.quranUrl === 'string') ? config.quranUrl.trim() : '';
                 document.querySelectorAll('.quran-btn-read').forEach(btn => {
-                    if (customQuranUrl && (customQuranUrl.startsWith('http://') || customQuranUrl.startsWith('https://'))) {
+                    if (customQuranUrl && typeof customQuranUrl.startsWith === 'function' && (customQuranUrl.startsWith('http://') || customQuranUrl.startsWith('https://'))) {
                         btn.onclick = function(e) {
                             e.preventDefault();
                             e.stopPropagation();
@@ -3634,9 +3682,9 @@
             }
 
             // Form submission handling
-            if (document.login) {
+            if (document.login && document.login.addEventListener) {
                 document.login.addEventListener('submit', function () {
-                    const uInput = document.login.querySelector('input[username-field]') || document.querySelector('input[name="username"]');
+                    const uInput = (document.login && document.login.querySelector) ? document.login.querySelector('input[username-field]') : document.querySelector('input[username-field], input[name="username"]');
                     if (uInput && uInput.value && uInput.value.trim().length > 0) {
                         const val = uInput.value.trim();
                         try {
@@ -3825,8 +3873,8 @@
             }
 
             // Hook on login form submission & keyboard "Go" / "Enter" key
-            if (document.login) {
-                const usernameInput = document.login.querySelector("input[name='username']");
+            if (document.login && document.login.querySelector) {
+                const usernameInput = document.login.querySelector("input[name='username'], input[username-field]");
                 if (usernameInput) {
                     usernameInput.addEventListener('keydown', function (e) {
                         if (e.key === 'Enter' || e.keyCode === 13) {
@@ -3841,17 +3889,19 @@
                     });
                 }
 
-                document.login.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    const mainBtn = document.getElementById('mainLoginBtn') || document.querySelector('.login-submit');
-                    if (mainBtn) {
-                        mainBtn.click();
-                    } else if (typeof onLoginSubmitted === 'function') {
-                        onLoginSubmitted();
-                    }
-                    setTimeout(resetWindowScrollToTop, 100);
-                    setTimeout(resetWindowScrollToTop, 350);
-                });
+                if (document.login.addEventListener) {
+                    document.login.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        const mainBtn = document.getElementById('mainLoginBtn') || document.querySelector('.login-submit');
+                        if (mainBtn) {
+                            mainBtn.click();
+                        } else if (typeof onLoginSubmitted === 'function') {
+                            onLoginSubmitted();
+                        }
+                        setTimeout(resetWindowScrollToTop, 100);
+                        setTimeout(resetWindowScrollToTop, 350);
+                    });
+                }
             }
 
             // Reset on page show or hashchange

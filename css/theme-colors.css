@@ -520,7 +520,7 @@ body::before {
 
 /* كلمة نت (نيون أزرق كهربائي مشع متناسق مع ثيم البرق) */
 .brand-net-gold {
-  font-size:               clamp(28px, 8.8vw, 40px) !important;
+  font-size:               clamp(19px, 5.2vw, 25px) !important;
   font-weight:             900 !important;
   background:              linear-gradient(135deg, #FFFFFF 0%, #A6F4FF 25%, #00F0FF 65%, #0088FF 100%) !important;
   -webkit-background-clip: text !important;

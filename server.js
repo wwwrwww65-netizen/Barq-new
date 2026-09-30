@@ -162,7 +162,7 @@ app.all('/login', (req, res) => {
 
   // Any other card succeeds in simulation!
   const defaultDomain = getConfigDefaultSpeed() || 'speed_normal';
-  let domain = (req.query.domain || req.body?.domain || defaultDomain || '').trim();
+  let domain = (req.query.domain || req.body?.domain || req.query.speed || req.body?.speed || simulatedSession.domain || defaultDomain || '').trim();
   if (username.startsWith('777')) {
     domain = '';
   }
@@ -201,7 +201,7 @@ app.all('/status', (req, res) => {
   const isAjax = req.headers.accept?.includes('application/json') || req.query.var !== undefined || req.xhr;
   const username = req.query.username || simulatedSession.username || "770807777";
   const defaultDomain = getConfigDefaultSpeed();
-  const currentSpeed = req.query.domain || simulatedSession.domain || defaultDomain || "";
+  const currentSpeed = req.query.domain || req.body?.domain || simulatedSession.domain || defaultDomain || "";
 
   if (isAjax) {
     res.setHeader('Content-Type', 'application/json');
@@ -217,6 +217,7 @@ app.all('/status', (req, res) => {
       uptime: "3h 45m",
       remain_bytes_total: "3435973836",
       session_time_left: "6d 12h",
+      domain: currentSpeed,
       spes: currentSpeed,
       sspeed: currentSpeed,
       sps: currentSpeed,
