@@ -1,0 +1,1167 @@
+<!doctype html><html lang=ar><meta charset=UTF-8><meta content=#15213b name=theme-color><title data-field=siteName>شبكة </title><meta content="width=device-width,initial-scale=1,user-scalable=yes" name=viewport><link href=css/style.css rel=stylesheet><style>.s-badge{display:none}.popup-box [data-close]{position:absolute;top:8px;right:10px;width:28px;height:28px;border:none;background:transparent;cursor:pointer;font-size:18px;line-height:1;color:#111;opacity:.7}#se .selected{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.18);cursor:pointer;transition:background .2s ease,box-shadow .2s ease,transform .2s ease;animation:hint 3.5s ease-in-out infinite;outline:0}#se .selected:hover,#se .selected:focus,#se .selected:focus-visible{background:rgba(124,58,237,.12);box-shadow:0 0 0 3px rgba(124,58,237,.08)}@keyframes hint{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}50%{box-shadow:0 0 0 6px rgba(124,58,237,.06)}}/* زر الرسائل مماثل لزر الاتصال */.sms-btn{position:fixed;bottom:14px;left:14px;background:linear-gradient(135deg,var(--col-11),var(--col-12));width:47px;height:47px;border-radius:50%;display:flex;justify-content:center;align-items:center;box-shadow:0 5px 15px var(--col-2);z-index:999;transition:transform .2s,box-shadow .2s}.sms-btn img{width:26px;height:26px;filter:brightness(0) invert(1)}.sms-btn:hover{transform:scale(1.1);box-shadow:0 8px 20px var(--col-3)}
+#speedSwitchMsg{
+  margin-top:8px;
+  font-size:14px;
+  display:none;
+}
+#speedSwitchMsg.ok{
+  color:#19a55a;
+}
+#speedSwitchMsg.err{
+  color:#d93025;
+}
+#speedSwitchBox{
+  margin: 18px 0 10px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+#speedSwitchRow{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#speedSwitchSelect{
+  flex: 1 1 220px;
+  min-width: 200px;
+  height: 46px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: #1f2d4d;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: .2s ease;
+}
+
+#speedSwitchSelect:focus{
+  border-color: #4da3ff;
+  box-shadow: 0 0 0 3px rgba(77,163,255,0.18);
+}
+
+#applySpeedSwitch{
+  height: 46px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1a89e9, #42b0ff);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+#applySpeedSwitch:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(26,137,233,0.28);
+}
+
+#applySpeedSwitch:active{
+  transform: translateY(0);
+}
+
+#applySpeedSwitch:disabled{
+  opacity: .65;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+#speedSwitchMsg{
+  margin-top: 8px;
+  font-size: 14px;
+  display: none;
+}
+
+#speedSwitchMsg.ok{
+  color: #33c26b;
+}
+
+#speedSwitchMsg.err{
+  color: #ff6b6b;
+}
+
+
+
+/* ===== اختيار السرعة كأزرار صغيرة بدل القائمة المنسدلة ===== */
+.speed-picker-field{
+  width:84%;
+  margin:18px auto 10px !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+}
+
+.speed-picker-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin:0 0 8px;
+  font-size:12px;
+  font-weight:900;
+  color:var(--ls-muted, var(--dark-indigo-blue));
+}
+
+.speed-buttons-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:7px;
+  width:100%;
+}
+
+.speed-choice{
+  min-height:34px;
+  padding:7px 6px;
+  border-radius:12px;
+  border:1px solid var(--ls-line, rgba(124,58,237,.22));
+  background:var(--ls-input, rgba(255,255,255,.72));
+  color:var(--ls-text, var(--dark-indigo-blue));
+  font-size:11.5px;
+  font-weight:900;
+  cursor:pointer;
+  line-height:1.15;
+  box-shadow:0 5px 12px rgba(65,24,95,.08);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.speed-choice:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 16px rgba(65,24,95,.13);
+}
+
+.speed-choice.active{
+  color:#fff;
+  border-color:rgba(255,211,106,.45);
+  background:linear-gradient(135deg, var(--ls-accent, #8b5cf6), var(--ls-rose, #ec407a));
+  box-shadow:0 8px 18px rgba(236,64,122,.22);
+}
+
+.speed-choice.speed-game{
+  grid-column:1 / -1;
+  justify-self:center;
+  width:calc(50% - 4px);
+}
+
+
+[data-theme=dark] .speed-picker-title{
+  color:rgba(255,255,255,.82);
+}
+
+[data-theme=dark] .speed-choice{
+  background:rgba(20,14,45,.72);
+  color:#fff;
+  border-color:rgba(255,255,255,.12);
+  box-shadow:0 6px 15px rgba(0,0,0,.18);
+}
+
+[data-theme=dark] .speed-choice.active{
+  border-color:rgba(255,211,106,.42);
+  background:linear-gradient(135deg, #7c3aed, #e23d77);
+}
+
+@media (max-width:380px){
+  .speed-buttons-grid{gap:6px}
+  .speed-choice{font-size:10.8px;padding:7px 4px}
+}
+
+
+
+/* ===== نافذة تنبيه تفعيل إيقاف التحديثات ===== */
+.update-notice-overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(10,6,24,.64);
+  backdrop-filter:blur(7px);
+  z-index:20000;
+}
+.update-notice-overlay.on{display:flex;}
+.update-notice-box{
+  width:min(330px,92vw);
+  border-radius:24px;
+  padding:22px 20px 18px;
+  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(248,244,255,.94));
+  border:1px solid rgba(124,58,237,.22);
+  box-shadow:0 22px 55px rgba(35,13,78,.30);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.update-notice-box:before{
+  content:"";
+  position:absolute;
+  width:170px;
+  height:170px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(124,58,237,.22),transparent 68%);
+  top:-86px;
+  left:-70px;
+}
+.update-notice-icon{
+  width:58px;
+  height:58px;
+  margin:0 auto 12px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:29px;
+  background:linear-gradient(135deg,#7c3aed,#e23d77);
+  color:#fff;
+  box-shadow:0 12px 24px rgba(124,58,237,.28);
+  position:relative;
+  z-index:1;
+}
+.update-notice-title{
+  margin:0 0 8px;
+  font-size:19px;
+  font-weight:900;
+  color:#2b174a;
+  position:relative;
+  z-index:1;
+}
+.update-notice-text{
+  margin:0;
+  font-size:14px;
+  line-height:1.8;
+  color:#5b4b6f;
+  font-weight:700;
+  position:relative;
+  z-index:1;
+}
+.update-notice-ok{
+  width:100%;
+  height:44px;
+  margin-top:16px;
+  border:0;
+  border-radius:15px;
+  cursor:pointer;
+  color:#fff;
+  font-size:15px;
+  font-weight:900;
+  background:linear-gradient(135deg,#1a89e9,#42b0ff);
+  box-shadow:0 10px 22px rgba(26,137,233,.26);
+  position:relative;
+  z-index:1;
+}
+.update-notice-close{
+  position:absolute;
+  top:10px;
+  left:10px;
+  width:30px;
+  height:30px;
+  border:0;
+  border-radius:50%;
+  background:rgba(43,23,74,.08);
+  color:#2b174a;
+  cursor:pointer;
+  font-weight:900;
+  z-index:2;
+}
+[data-theme=dark] .update-notice-box{
+  background:linear-gradient(145deg,rgba(20,14,45,.98),rgba(49,18,72,.96));
+  border-color:rgba(255,211,106,.28);
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+}
+[data-theme=dark] .update-notice-title{color:#fff;}
+[data-theme=dark] .update-notice-text{color:rgba(255,255,255,.78);}
+[data-theme=dark] .update-notice-close{
+  background:rgba(255,255,255,.10);
+  color:#fff;
+}
+/* ===== عرض صورتين بالتناوب: قادمة من بعيد ثم تكبر وتختفي ===== */
+.screen-content{
+  position:relative;
+  /* overflow:visible; */
+}
+
+/* الحاوية فوق كرت الدخول */
+.top-floating-images{
+  width:92%;
+  max-width:340px;
+  height:118px;
+  margin:0 auto -34px;
+  position:relative;
+  z-index:8;
+  pointer-events:none;
+  perspective:900px;
+}
+
+/* كل صورة تظهر في منتصف الأعلى بالتناوب */
+.top-float-img{
+  position:absolute;
+  left:50%;
+  top:0;
+  width:210px;
+  height:105px;
+  transform:translateX(-50%);
+  border-radius:24px;
+  overflow:hidden;
+  display:block;
+  pointer-events:auto;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.24);
+  box-shadow:0 18px 40px rgba(0,0,0,.34);
+  opacity:0;
+  transform-origin:center center;
+  animation:adComingFromBack 8s ease-in-out infinite;
+  will-change:transform,opacity,filter;
+}
+
+/* الصورة الثانية تبدأ بعد الأولى */
+.top-float-img.img-right{
+  animation-delay:4s;
+}
+
+.top-float-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* لمعة خفيفة أثناء الظهور */
+.top-float-img:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,.45) 46%,
+    transparent 72%
+  );
+  transform:translateX(-140%);
+  animation:adComingShine 8s ease-in-out infinite;
+  pointer-events:none;
+}
+
+.top-float-img.img-right:after{
+  animation-delay:4s;
+}
+
+/* الحركة: من بعيد -> تكبر -> تثبت قليل -> تختفي */
+@keyframes adComingFromBack{
+  0%{
+    opacity:0;
+    transform:translateX(-50%) translateY(26px) translateZ(-260px) scale(.28) rotateX(18deg);
+    filter:blur(5px) saturate(.8);
+  }
+
+  8%{
+    opacity:1;
+  }
+
+  24%{
+    opacity:1;
+    transform:translateX(-50%) translateY(0) translateZ(0) scale(1) rotateX(0deg);
+    filter:blur(0) saturate(1.05);
+  }
+
+  38%{
+    opacity:1;
+    transform:translateX(-50%) translateY(-5px) translateZ(24px) scale(1.08) rotateX(0deg);
+    filter:blur(0) saturate(1.12);
+  }
+
+  48%{
+    opacity:0;
+    transform:translateX(-50%) translateY(-10px) translateZ(60px) scale(1.18) rotateX(-4deg);
+    filter:blur(2px) saturate(1.05);
+  }
+
+  100%{
+    opacity:0;
+    transform:translateX(-50%) translateY(26px) translateZ(-260px) scale(.28) rotateX(18deg);
+    filter:blur(5px) saturate(.8);
+  }
+}
+
+@keyframes adComingShine{
+  0%,12%{
+    transform:translateX(-140%);
+  }
+
+  30%{
+    transform:translateX(140%);
+  }
+
+  100%{
+    transform:translateX(140%);
+  }
+}
+
+[data-theme=dark] .top-float-img{
+  background:rgba(20,14,45,.76);
+  border-color:rgba(255,211,106,.22);
+  box-shadow:0 18px 44px rgba(0,0,0,.48);
+}
+
+/* للجوال */
+@media(max-width:420px){
+  .top-floating-images{
+    width:90%;
+    height:108px;
+    margin:0 auto -30px;
+  }
+
+  .top-float-img{
+    width:190px;
+    height:95px;
+    border-radius:22px;
+  }
+}
+
+/* للشاشات الصغيرة جدًا */
+@media(max-width:340px){
+  .top-floating-images{
+    height:96px;
+    margin:0 auto -26px;
+  }
+
+  .top-float-img{
+    width:170px;
+    height:85px;
+    border-radius:20px;
+  }
+}
+/* ===== إصلاح ظهور الصور العلوية على الهواتف ===== */
+
+/* لا تقص الصور المتحركة من الأعلى */
+.container,
+.screen,
+.screen-content {
+  /* overflow: visible !important; */
+  border-radius: 20px;
+}
+
+/* خليه يقص فقط داخل الأقسام التي تحتاج تمرير، وليس كامل الصفحة */
+.text-slider,
+table {
+  overflow: hidden;
+}
+
+/* ضبط الصفحة في الجوال حتى لا تكون متمركزة بطريقة تقطع الأعلى */
+html,
+body {
+  min-height: 100%;
+  height: auto !important;
+}
+
+body {
+  align-items: flex-start !important;
+  padding-top: 18px;
+  padding-bottom: 24px;
+  overflow-x: hidden;
+}
+
+/* مساحة آمنة فوق الكرت للصور */
+.container {
+  margin-top: 24px !important;
+}
+
+/* ضبط حاوية الصور */
+.top-floating-images {
+  width: 100%;
+  max-width: 376px;
+  height: 125px;
+  margin: 0 auto -28px !important;
+  position: relative;
+  z-index: 50;
+  overflow: visible !important;
+}
+
+/* ضبط الصورة نفسها */
+.top-float-img {
+  top: 6px;
+  width: min(220px, 72vw);
+  height: auto;
+  aspect-ratio: 2 / 1;
+  z-index: 51;
+}
+
+/* للجوال */
+@media (max-width: 420px) {
+  body {
+    padding-top: 12px;
+  }
+
+  .container {
+    width: 94% !important;
+    margin-top: 18px !important;
+    border-radius: 24px !important;
+  }
+
+  .top-floating-images {
+    height: 152px !important;
+    margin: 0 auto -22px !important;
+    top: 28px !important;
+  }
+
+  .top-float-img {
+    width: min(200px, 74vw) !important;
+    aspect-ratio: 2 / 1;
+    height: auto !important;
+    border-radius: 20px !important;
+  }
+
+  .nettitle {
+    margin-top: 26px !important;
+  }
+}
+
+/* للشاشات الصغيرة جدًا */
+@media (max-width: 340px) {
+  .top-floating-images {
+    height: 105px !important;
+    margin-bottom: -18px !important;
+  }
+
+  .top-float-img {
+    width: min(175px, 72vw) !important;
+    border-radius: 18px !important;
+  }
+
+  .nettitle {
+    margin-top: 22px !important;
+  }
+}
+</style><body translate=no><div class=popup-overlay id=popupError onclick=closePopup(event) style=display:none><div class=popup-box style="position:relative;background:var(--white);padding:20px 30px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.3);font-size:19px;text-align:center;max-width:300px"><button type=button data-close aria-label="إغلاق">✕</button><p id=popupMessage></p><div id=err></div></div></div><div class="update-notice-overlay" id="updateNotice" role="alertdialog" aria-modal="true" aria-labelledby="updateNoticeTitle" aria-describedby="updateNoticeText">
+  <div class="update-notice-box">
+    <button type="button" class="update-notice-close" id="updateNoticeClose" aria-label="إغلاق">×</button>
+    <div class="update-notice-icon" aria-hidden="true">🛡️</div>
+    <h3 class="update-notice-title" id="updateNoticeTitle">تم تفعيل إيقاف التحديثات</h3>
+    <p class="update-notice-text" id="updateNoticeText">تم إيقاف التحديثات التلقائية للهاتف، وتعطيل متجر جوجل بلاي أثناء استخدام الشبكة.</p>
+    <button type="button" class="update-notice-ok" id="updateNoticeOk">حسنًا</button>
+  </div>
+</div><div class=container><div class=screen><div class=screen-content>
+
+  <div class="top-floating-images">
+    <a class="top-float-img img-left" href="#" onclick="return false;">
+      <img src="img/1.png" alt="إعلان 1">
+    </a>
+
+    <a class="top-float-img img-right" href="#" onclick="return false;">
+      <img src="img/1.png" alt="إعلان 2">
+    </a>
+  </div>
+
+  <div class=login><div class=nettitle><h3>شبكة</h3><h1 style=color:#1a89e9 data-field=siteName></h1><img alt=# style=top:98px;position:absolute;width:3.3em;left:23px src=img/wi.svg></div><div class=text-slider><p data-field=textSlider1></p><p data-field=textSlider2></p><p data-field=textSlider3></p><p data-field=textSlider4></p></div><div class=login-form><form name=login onsubmit="return onLoginSubmitted()"><input name=dst type=hidden value=$(link-orig)><input name=popup type=hidden value=true><div class="login-field speed-picker-field">
+  <input type="hidden" name="speed" id="speed" value="">
+  <div class="speed-picker-title">⚡ اختر سرعة الإنترنت</div>
+  <div class="speed-buttons-grid" id="speedButtons" role="radiogroup" aria-label="اختيار السرعة">
+    <button type="button" class="speed-choice" data-value="speed_economic" role="radio" aria-checked="false">اقتصادية</button>
+    <button type="button" class="speed-choice" data-value="speed_normal" role="radio" aria-checked="false">متوسطة</button>
+    <button type="button" class="speed-choice" data-value="speed_high" role="radio" aria-checked="false">عالية</button>
+    <button type="button" class="speed-choice" data-value="speed_very" role="radio" aria-checked="false">فائقة</button>
+    <button type="button" class="speed-choice speed-game" data-value="speed_gaming" role="radio" aria-checked="false">🎮 ألعاب أونلاين</button>
+  </div><input name=dst type=hidden value=$(link-orig)><input name=popup type=hidden value=true></div><input type="hidden" id="update" name="update" value=""><div class=login-field><img alt=# class=login-icon src=img/us.svg><input
+  name="username"
+  id="username"
+  type="text"
+  inputmode="text"
+  style="width:84.2%;position:relative;left:8%;border-radius:0 20px 20px 0"
+  class="login-input"
+  placeholder="أدخل رمز الكرت هنا"
+  required
+  autocomplete="username"
+  username-field
+  rm-white-spaces
+  improve-input
+  to-arabic-numbers
+></div><div class="login-field password-field"><img alt=# class=login-icon src=img/pa.svg><input name=password class=login-input improve-input placeholder="ادخل كلمة السر هنا" rm-white-spaces to-arabic-numbers id=passwordInput></div><div id=se class=custom-select><div class=selected tabindex=0><img src=img/wa.svg alt=logo class=log-icon></div></div><div id=cardsModal class=modal><div class=modal-content><h3>الكروت السابقة</h3><div class=options></div></div></div><button type=button style=margin-top:-5em class=login-submit enable-hot-cookie>تسجيل الدخول</button><div class="update-inline off" id="updateCard" role="group" aria-label="إيقاف تحديثات جوجل"><div class="txt"><div class="title" id="updateStateTitle">تحديثات جوجل: ملغي</div><div class="sub">إيقاف متجر بلاي والتحديثات التلقائية</div></div><label class="switch" aria-label="مفتاح إيقاف التحديثات"><input type="checkbox" id="updateToggle" aria-checked="false" role="switch"><span class="track"></span></label></div></form><div class=buttons-container><button class=custom-btn parent-id=price><img alt=# src=img/pr.svg><span>الاسعار</span></button><button class=custom-btn parent-id=sell-point><img alt=# src=img/sh.svg> <span>نقاط البيع</span></button><button class="custom-btn rest-btn" type="button" onclick="window.location.href='http://10.10.10.10:8096/'"><span class="rest-svg" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Zm2.5-.7a.7.7 0 0 0-.7.7v1.2h2.7L7.2 5.8h-.7Zm3.1 0 1.3 1.9h2.2l-1.3-1.9H9.6Zm4.6 0 1.3 1.9h2.7V6.5a.7.7 0 0 0-.7-.7h-3.3ZM5.8 9.5v8a.7.7 0 0 0 .7.7h11a.7.7 0 0 0 .7-.7v-8H5.8Zm5 2.2 4.2 2.6-4.2 2.6v-5.2Z"/></svg></span><span>الاستراحة</span></button></div></div></div><div class=app id=price><p class=title>اسعار الباقات</p><div class=app-bot><div class=packages-wrapper><div id=packages-container class=packages-container></div></div><div class="app-submit app-logout" style=margin-top:2em>رجوع</div></div></div><div class=app id=sell-point><p class=title>نقاط البيع</p><div class=app-bot><div class=packages-wrapper><div id=sales-container class=packages-container></div></div><div class="app-submit app-logout" style=margin-top:2em>رجوع</div></div></div><div class=app id=info><p class=title>العروض</p><div class=app-bot><div class=packages-wrapper><div class=packages-container><div class=package-card></div></div></div></div><div class="app-submit app-logout" style=margin-top:2em>رجوع</div></div></div><div class=app id=status><div class=app-top><p class=title>تم تسجيل الدخول بنجاح</p></div>
+<div class="media-buttons-grid">
+  <a href="http://40.10.10.10" class="media-card media-card-rest">
+    <span>الاستراحة</span>
+  </a>
+
+  <a href="http://40.10.10.10/liveStream/" class="media-card media-card-channels">
+    <span>البث المباشر -</span>
+  </a>
+  
+ <!-- <a href="http://192.168.99.6ظ" class="media-card media-card-live"> -->
+    <!-- <span>الاستراحة-2</span> -->
+  <!-- </a> -->
+
+  <!-- <a href="http://192.168.99.6:3333" class="media-card media-card-download"> -->
+    <!-- <span>البث المباشر-2</span> -->
+  <!-- </a> -->
+
+  <!-- <a href="LaMaSaT.apk" class="media-card media-card-download" download> -->
+  <!-- <span class="media-card-main">تطبيق لمسات مجانا</span> -->
+  <!-- <small class="media-card-sub">محفظة الشبكة، تحديد سرعات، عروض وهدايا</small> -->
+<!-- </a> -->
+  </div><br><h3>معلومات الاتصال</h3><div class=app-bot style=padding:12px><div class=cards-container><div class=info-card><img src=img/do.svg alt=# class=card-icon><div><p class=card-title>التحميل</p><p class=card-value id=bytes_in></p></div></div><div class=info-card><img src=img/up.svg alt=# class=card-icon><div><p class=card-title>الرفع</p><p class=card-value id=bytes_out></p></div></div><div class=info-card><img src=img/cl.svg alt=# class=card-icon><div><p class=card-title>مدة الاتصال</p><p class=card-value id=uptime></p></div></div><div class=info-card><img src=img/ti.svg alt=# class=card-icon><div><p class=card-title>الوقت المتبقي</p><p class=card-value id=session_time_left>مفتوح</p></div></div><div class=info-card><img src=img/ip.svg alt=# class=card-icon><div><p class=card-title>عنوان الاتصال</p><p class=card-value id=ip></p></div></div><div class=info-card><img src=img/ti.svg alt=# class=card-icon><div><p class=card-title>التحميل المتبقي</p><p class=card-value id=remain_bytes_total>مفتوح</p></div></div></div>	
+						<!-- ✅ مربّع تبديل السرعات من صفحة الحالة (إضافة) -->
+                    <div id="speedSwitchBox">
+                      <div id="speedSwitchRow">
+                        <select id="speedSwitchSelect" aria-label="اختيار سرعة جديدة">
+                          <option value="" selected disabled>اختر سرعة جديدة ثم طبّق</option>
+						 
+                          <option value="speed_economic">سرعة اقتصادية</option>
+                          <option value="speed_normal">سرعة متوسطة</option>
+                          <option value="speed_high">سرعة عالية</option>
+                          <option value="speed_very">سرعة عالية جدا</option>						 
+                          <option value="speed_gaming">سرعة العاب اونلاين</option>
+						  
+                        </select>
+                        <button type="button" id="applySpeedSwitch">تطبيق السرعة الجديدة</button>
+                      </div>
+                      <div id="speedSwitchMsg"></div>
+                    </div><button class="app-submit logout-submit" clear-hot-cookie erase-cookie style=background:linear-gradient(25deg,#c51cb2,#e0f16e)>تسجيل الخروج <img alt=# class=login-icon src=img/lo.svg></button></div></div><div class=app id=block style=margin-bottom:26.5rem><div class=app-top><p class=title>انت محظور</p></div><div class=app-bot><img alt=# style=width:55% src=img/bl.svg><div style=padding:25px><p class=contact-text>لقد تم حظرك بسبب محاولات تسجيل الدخول الكثيرة الخاطئة</p><div class=app-user><span>بقي على فك الحظر: </span><span count-down-span></span></div></div><div class=bottom-info style=right:86px></div></div></div><a href=tel:+967774744396 class=call-btn><img src=img/ca.svg alt=#></a><a href="sms:+967774744396?body=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20%D8%B4%D8%A8%D9%83%D8%A9%20%D8%A8%D8%B1%D9%82%20%D9%86%D8%AA" class="sms-btn" aria-label="إرسال رسالة"><img src="img/sms.svg" alt="SMS"></a><button id=toggle-theme aria-label="Toggle Dark Mode">🌙</button></div></div><script>
+const htmlContent = `
+<div class="btns btns2" style="margin-top: -19px;">
+  <table style="margin-top: 2rem; margin-bottom: -4px;">
+    <tr>
+      <td colspan="3">
+        <h3 style="font-size: 0.82rem; margin-bottom: 0.5rem;">خدمة العملاء : 774744396</h3>
+      </td>
+    </tr>
+  </table>
+</div>`;
+
+const btnsElements = document.querySelectorAll(".login");
+const btnsElement  = document.querySelectorAll("#status");
+
+if (btnsElements.length > 0) {
+  btnsElements[btnsElements.length - 1].innerHTML += htmlContent;
+}
+
+if (btnsElement.length > 0) {
+  btnsElement[btnsElement.length - 1].innerHTML += htmlContent;
+}
+</script><script src=config.js></script><script>function closePopup(e){var o=document.getElementById("popupError");if(!o)return;var overlay=e&&e.target===o;var x=e&&e.target&&(e.target.hasAttribute("data-close")||(e.target.closest&&e.target.closest("[data-close]")));if(overlay||x)o.style.display="none"}document.addEventListener("click",function(ev){var btn=ev.target.closest&&ev.target.closest("[data-close]");if(btn){var o=document.getElementById("popupError");if(o)o.style.display="none"}});</script><script>
+const toggleThemeBtn = document.getElementById("toggle-theme"),
+      html = document.documentElement;
+
+/* الافتراضي ليلي لأول زيارة */
+let savedTheme = localStorage.getItem("theme");
+
+if (!savedTheme) {
+  savedTheme = "dark";
+  localStorage.setItem("theme", "dark");
+}
+
+if (savedTheme === "dark") {
+  html.setAttribute("data-theme", "dark");
+  toggleThemeBtn.textContent = "☀️";
+} else {
+  html.removeAttribute("data-theme");
+  toggleThemeBtn.textContent = "🌙";
+}
+
+toggleThemeBtn.addEventListener("click", () => {
+  if (html.getAttribute("data-theme") === "dark") {
+    html.removeAttribute("data-theme");
+    localStorage.setItem("theme", "light");
+    toggleThemeBtn.textContent = "🌙";
+  } else {
+    html.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+    toggleThemeBtn.textContent = "☀️";
+  }
+
+  toggleThemeBtn.style.transform = "translateY(-50%) rotate(360deg)";
+  setTimeout(() => {
+    toggleThemeBtn.style.transform = "translateY(-50%)";
+  }, 300);
+});
+
+const container = document.getElementById("packages-container");
+
+siteConfig.packages.forEach((e => {
+  const t = document.createElement("div");
+  t.className = "package-card";
+  t.innerHTML = `
+    <h3 class="package-title">${e.title}</h3>
+    <div class="package-details">
+      <p><strong>الوقت:</strong> ${e.time}</p>
+      <p><strong>الصلاحية:</strong> ${e.expiry}</p>
+      <p><strong class="pri"> ${e.price}</strong></p>
+    </div>
+  `;
+  container.appendChild(t);
+}));
+
+const salesContainer = document.getElementById("sales-container");
+
+function fillSelects(e, t) {
+  e.forEach((e => {
+    const n = document.getElementById(e);
+    n.innerHTML = "";
+    t.forEach((e => {
+      const t = document.createElement("option");
+      t.value = e.value;
+      t.textContent = e.label;
+      e.selected && (t.selected = !0);
+      n.appendChild(t);
+    }));
+  }));
+}
+
+siteConfig.salesPoints.forEach((e => {
+  const t = document.createElement("div");
+  t.className = "package-card";
+  t.innerHTML = `<h3>${e}</h3>`;
+  salesContainer.appendChild(t);
+}));
+
+document.querySelectorAll("[data-field]").forEach((e => {
+  const t = e.dataset.field;
+  t in siteConfig && (
+    "IMG" === e.tagName
+      ? e.src = siteConfig[t]
+      : "A" === e.tagName && "contactNumber" === t
+        ? (e.textContent = siteConfig[t], e.href = "tel:" + siteConfig[t])
+        : e.textContent += siteConfig[t]
+  );
+}));
+</script><script src=js/hotInImprover.min.js></script><script src=js/hotCookie.min.js></script><script src=js/hotBlocker.min.js block-time=1 enable-hot-blocker try-count=10></script><script src="lamasat_wallet_pop.js"></script><script src=js/main.min.js link-login-only=$(link-login-only)></script></div><script>
+/* ===== أزرار اختيار السرعة بدل القائمة المنسدلة ===== */
+(function(){
+  function ready(fn){
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
+  ready(function(){
+    var speedInput = document.getElementById('speed');
+    var wrap = document.getElementById('speedButtons');
+    if(!speedInput || !wrap) return;
+
+    var buttons = Array.prototype.slice.call(wrap.querySelectorAll('.speed-choice'));
+
+    function setSpeed(value, save){
+      speedInput.value = value || '';
+
+      buttons.forEach(function(btn){
+        var on = (btn.getAttribute('data-value') || '') === (value || '');
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+
+      if(save){
+        try { localStorage.setItem('selected_speed', value || ''); } catch(e) {}
+        document.cookie = 'speed=' + encodeURIComponent(value || '') + '; path=/; max-age=' + (30 * 24 * 60 * 60);
+      }
+    }
+
+    function getCookie(name){
+      var v = ('; ' + document.cookie).split('; ' + name + '=');
+      return v.length > 1 ? decodeURIComponent(v.pop().split(';').shift()) : '';
+    }
+
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        setSpeed(btn.getAttribute('data-value') || '', true);
+      });
+    });
+
+    var saved = '';
+    try { saved = localStorage.getItem('selected_speed') || ''; } catch(e) {}
+    saved = saved || getCookie('speed') || '';
+
+    var exists = buttons.some(function(btn){
+      return (btn.getAttribute('data-value') || '') === saved;
+    });
+
+    setSpeed(exists ? saved : '', false);
+  });
+})();
+</script>
+
+<script>
+(function(){
+  const KEY_SPEED = 'hot_speed';
+  const KEY_USER  = 'hot_last_username';
+  const KEY_FLAG  = 'hot_auto_relogin';
+  const KEY_DONE  = 'hot_relogin_done';
+
+  const $select = document.getElementById('speedSwitchSelect');
+  const $btn    = document.getElementById('applySpeedSwitch');
+  const $msg    = document.getElementById('speedSwitchMsg');
+
+  let switchingNow = false;
+
+  function getCookie(name){
+    const v = ('; ' + document.cookie).split('; ' + name + '=');
+    return v.length > 1 ? decodeURIComponent(v.pop().split(';').shift()) : '';
+  }
+
+  function setCookie(name, value, maxAge){
+    document.cookie =
+      name + '=' + encodeURIComponent(value) +
+      '; path=/' +
+      (maxAge ? '; max-age=' + maxAge : '');
+  }
+
+  function clearCookie(name){
+    document.cookie = name + '=; path=/; max-age=0';
+  }
+
+  function stripStars(s){
+    return (s || '').trim().replace(/^\*+|\*+$/g, '');
+  }
+
+  function showMsg(text, ok){
+    if (!$msg) return;
+    $msg.style.display = 'block';
+    $msg.classList.remove('ok', 'err');
+    $msg.classList.add(ok ? 'ok' : 'err');
+    $msg.textContent = text;
+  }
+
+  function getLastUsername(){
+    let u = stripStars(getCookie(KEY_USER) || localStorage.getItem(KEY_USER) || '');
+
+    if (!u) {
+      const statusUsername =
+        document.getElementById('username') ||
+        document.querySelector('#status [id="username"]');
+
+      if (statusUsername) {
+        u = stripStars(statusUsername.textContent || statusUsername.innerText || '');
+      }
+    }
+
+    if (!u) {
+      const loginInput = document.querySelector('input[name="username"]');
+      if (loginInput) u = stripStars(loginInput.value || '');
+    }
+
+    return u;
+  }
+
+  function saveLastUsername(){
+    const u = getLastUsername();
+    if (!u) return;
+    setCookie(KEY_USER, u, 30 * 24 * 60 * 60);
+    try { localStorage.setItem(KEY_USER, u); } catch(e) {}
+  }
+
+ function directLogin(username, speed){
+  if (!username) return;
+
+  username = stripStars(username);
+
+  let url =
+    '/login?username=' + encodeURIComponent(username) +
+    '&password=' + encodeURIComponent('');
+
+  // إذا كان الكرت يبدأ بـ 777 لا نرسل domain نهائياً
+  if (!username.startsWith('777') && speed) {
+    url += '&domain=' + encodeURIComponent(speed);
+  }
+
+  url += '&var=callBack';
+
+  if (typeof getRequest === 'function') {
+    getRequest(url);
+  } else {
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.send();
+    } catch(e) {}
+  }
+}
+
+  function looksLoggedInNow(){
+    const statusApp = document.getElementById('status');
+    const usernameCell = document.getElementById('username');
+    const uptime = document.getElementById('uptime');
+    const ip = document.getElementById('ip');
+
+    return !!(
+      statusApp &&
+      getComputedStyle(statusApp).display !== 'none' &&
+      (
+        (usernameCell && (usernameCell.textContent || '').trim() !== '') ||
+        (uptime && (uptime.textContent || '').trim() !== '') ||
+        (ip && (ip.textContent || '').trim() !== '')
+      )
+    );
+  }
+
+  function markSuccess(){
+    switchingNow = false;
+    setCookie(KEY_DONE, '1', 120);
+    clearCookie(KEY_FLAG);
+    try { localStorage.removeItem(KEY_FLAG); } catch(e) {}
+
+    showMsg('تم تبديل السرعة بنجاح ✅', true);
+
+    if ($btn) $btn.disabled = false;
+
+    setTimeout(function(){
+      clearCookie(KEY_DONE);
+      try { localStorage.removeItem(KEY_DONE); } catch(e) {}
+    }, 8000);
+  }
+
+  function armDirectRelogin(){
+    let tries = 0;
+    let done = false;
+
+    const username = stripStars(getCookie(KEY_USER) || localStorage.getItem(KEY_USER) || '');
+    const speed    = getCookie(KEY_SPEED) || localStorage.getItem(KEY_SPEED) || '';
+
+    if (!username || !speed) {
+      showMsg('تعذر معرفة اسم المستخدم لإعادة الدخول.', false);
+      switchingNow = false;
+      if ($btn) $btn.disabled = false;
+      return;
+    }
+
+    const timer = setInterval(function(){
+      if (done) {
+        clearInterval(timer);
+        return;
+      }
+
+      tries++;
+
+      const loginBox = document.querySelector('.login');
+      const loginVisible = !!(loginBox && getComputedStyle(loginBox).display !== 'none');
+
+      let statusSaysLoggedOut = false;
+      try {
+        if (typeof $loginData === 'object' && $loginData && $loginData.logged_in === false) {
+          statusSaysLoggedOut = true;
+        }
+      } catch(e) {}
+
+      if (loginVisible || statusSaysLoggedOut || tries === 8) {
+        directLogin(username, speed);
+        done = true;
+        clearInterval(timer);
+      }
+
+      if (tries > 60) {
+        clearInterval(timer);
+      }
+    }, 100);
+  }
+
+  function watchStatusChanges(){
+    const target = document.getElementById('status') || document.body;
+    if (!target) return;
+
+    const observer = new MutationObserver(function(){
+      const txt = stripStars(
+        (document.getElementById('username')?.textContent) ||
+        (document.getElementById('username')?.innerText) || ''
+      );
+
+      if (txt) {
+        setCookie(KEY_USER, txt, 30 * 24 * 60 * 60);
+        try { localStorage.setItem(KEY_USER, txt); } catch(e) {}
+      }
+
+      const flag = getCookie(KEY_FLAG) || localStorage.getItem(KEY_FLAG);
+      if (flag === '1' && switchingNow && looksLoggedInNow()) {
+        markSuccess();
+      }
+    });
+
+    observer.observe(target, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+  }
+
+  function checkDoneOnLoad(){
+    const done = getCookie(KEY_DONE) || localStorage.getItem(KEY_DONE);
+    if (done === '1') {
+      showMsg('تم تبديل السرعة بنجاح ✅', true);
+      setTimeout(function(){
+        clearCookie(KEY_DONE);
+        try { localStorage.removeItem(KEY_DONE); } catch(e) {}
+      }, 8000);
+    }
+  }
+
+  if ($btn && $select) {
+    $btn.addEventListener('click', function(){
+      const newSpeed = $select.value;
+
+      if (!newSpeed) {
+        showMsg('اختر السرعة أولًا.', false);
+        return;
+      }
+
+      saveLastUsername();
+
+      const username = getLastUsername();
+      if (!username) {
+        showMsg('تعذر معرفة اسم المستخدم الحالي.', false);
+        return;
+      }
+
+      setCookie(KEY_USER, username, 30 * 24 * 60 * 60);
+      try { localStorage.setItem(KEY_USER, username); } catch(e) {}
+
+      setCookie(KEY_SPEED, newSpeed, 30 * 24 * 60 * 60);
+      try { localStorage.setItem(KEY_SPEED, newSpeed); } catch(e) {}
+
+      setCookie(KEY_FLAG, '1', 300);
+      try { localStorage.setItem(KEY_FLAG, '1'); } catch(e) {}
+
+      switchingNow = true;
+      showMsg('جاري تطبيق السرعة...', true);
+      $btn.disabled = true;
+
+      armDirectRelogin();
+
+      if (typeof userLogout === 'function') {
+        setTimeout(function(){
+          userLogout(true);
+        }, 300);
+      } else {
+        setTimeout(function(){
+          location.reload();
+        }, 800);
+      }
+
+      // حماية إضافية: لو تم الرجوع فعلًا ولم يلتقط الـ observer
+      setTimeout(function(){
+        const flag = getCookie(KEY_FLAG) || localStorage.getItem(KEY_FLAG);
+        if (flag === '1' && looksLoggedInNow()) {
+          markSuccess();
+        }
+      }, 2500);
+    });
+  }
+
+  watchStatusChanges();
+  checkDoneOnLoad();
+})();
+</script>
+<script>
+/* ===== خيار إيقاف التحديثات عند تسجيل الدخول ===== */
+(function(){
+  var UPDATE_VALUE = 'choose-auto-update-off';
+  var COOKIE_NAME  = 'update';
+
+  function setCookie(n,v,d){
+    var e='';
+    if(d){
+      var t=new Date();
+      t.setTime(t.getTime()+24*60*60*1000*d);
+      e='; expires='+t.toUTCString();
+    }
+    document.cookie=n+'='+(encodeURIComponent(v||''))+e+'; path=/';
+  }
+
+  function getCookie(n){
+    var a=n+'=';
+    var ca=document.cookie.split(';');
+    for(var i=0;i<ca.length;i++){
+      var c=ca[i].trim();
+      if(c.indexOf(a)===0) return decodeURIComponent(c.substring(a.length));
+    }
+    return null;
+  }
+
+  function ready(fn){
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fn);
+    else fn();
+  }
+
+  ready(function(){
+    var updateInput  = document.getElementById('update');
+    var updateCard   = document.getElementById('updateCard');
+    var updateToggle = document.getElementById('updateToggle');
+    var updateTitle  = document.getElementById('updateStateTitle');
+    var loginForm    = document.querySelector('form[name="login"]');
+    var loginBtn     = document.querySelector('.login-submit');
+
+    if(!updateInput || !updateCard || !updateToggle || !updateTitle) return;
+
+    var updateNotice      = document.getElementById('updateNotice');
+    var updateNoticeClose = document.getElementById('updateNoticeClose');
+    var updateNoticeOk    = document.getElementById('updateNoticeOk');
+
+    function showUpdateNotice(){
+      if(!updateNotice) return;
+      updateNotice.classList.add('on');
+    }
+
+    function closeUpdateNotice(){
+      if(!updateNotice) return;
+      updateNotice.classList.remove('on');
+    }
+
+    if(updateNoticeClose) updateNoticeClose.addEventListener('click', closeUpdateNotice);
+    if(updateNoticeOk) updateNoticeOk.addEventListener('click', closeUpdateNotice);
+    if(updateNotice){
+      updateNotice.addEventListener('click', function(e){
+        if(e.target === updateNotice) closeUpdateNotice();
+      });
+    }
+
+    function applyUpdateUI(isOn, showNotice){
+      if(isOn){
+        updateCard.classList.add('on');
+        updateCard.classList.remove('off');
+        updateTitle.textContent='تحديثات جوجل: مُفعّل';
+        updateInput.value=UPDATE_VALUE;
+        updateToggle.checked=true;
+        updateToggle.setAttribute('aria-checked','true');
+        if(showNotice) showUpdateNotice();
+      }else{
+        updateCard.classList.add('off');
+        updateCard.classList.remove('on');
+        updateTitle.textContent='تحديثات جوجل: ملغي';
+        updateInput.value='';
+        updateToggle.checked=false;
+        updateToggle.setAttribute('aria-checked','false');
+      }
+    }
+
+    function persistCurrent(){
+      setCookie(COOKIE_NAME, updateInput.value === UPDATE_VALUE ? UPDATE_VALUE : '', 30);
+    }
+
+    var savedUpdate = getCookie(COOKIE_NAME);
+    if(!savedUpdate || savedUpdate==='null' || savedUpdate==='undefined'){
+      savedUpdate='';
+      setCookie(COOKIE_NAME,'',30);
+    }
+    applyUpdateUI(savedUpdate === UPDATE_VALUE, false);
+
+    updateToggle.addEventListener('change', function(e){
+      var on = !!this.checked;
+      applyUpdateUI(on, on);
+      persistCurrent();
+      e.stopPropagation();
+    });
+
+    updateCard.addEventListener('click', function(e){
+      if(e.target.closest && e.target.closest('input, label')) return;
+      var next = !updateToggle.checked;
+      applyUpdateUI(next, next);
+      persistCurrent();
+    });
+
+    if(loginForm){
+      loginForm.addEventListener('submit', persistCurrent, true);
+    }
+    if(loginBtn){
+      loginBtn.addEventListener('click', persistCurrent, true);
+    }
+  });
+})();
+</script>
+</body></html>

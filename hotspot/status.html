@@ -1,0 +1,28 @@
+$(if var == "")
+<script>
+	window.location.href="index.html"
+</script><table width="100%" height="100%" style="display:none;">
+    <tr><td align="center" valign="middle">
+      <table border="1" class="tabula">
+        <tr><td align="right"></td><td>$(username)</td></tr>
+        <tr><td align="right">IP address:</td><td>$(ip)</td></tr>
+        <tr><td align="right">bytes up/down:</td><td>$(bytes-out-nice)/$(bytes-in-nice)/$(remain-bytes-total-nice)</td></tr>
+        <tr><td align="right">connected / left:</td><td>$(uptime) / $(session-time-left)</td></tr>
+        <tr><td align="right">connected:</td><td>$(uptime)</td></tr>
+      </table>
+    </td></tr>
+	<tbody> <tr><td>اسم المستخدم</td><td id="val-username">$(username)</td></tr> <tr><td>زمن الجلسة</td><td id="val-uptime">$(uptime)</td></tr> <tr><td>الوقت المتبقي</td><td id="val-left">$(session-time-left)</td></tr> <tr> <td>الرصيد المستخدم</td> <td id="val-io" data-in="$(bytes-in)" data-out="$(bytes-out)"> $(bytes-in-nice) / $(bytes-out-nice) </td> </tr> <tr> <td>البيانات المتبقية</td> <td id="val-remaining" data-remaining="$(remain-bytes-total)"> $(remain-bytes-total-nice) </td> </tr> </tbody>
+  </table>
+$(else)
+{
+"logged_in": 			"$(logged-in)",
+"ip": 		        	"$(ip)",
+"sps": 		        	"$(domain)",
+"bytes_in": 			"$(bytes-in)",
+"bytes_out": 			"$(bytes-out)",
+"remain_bytes_total": 	"$(remain-bytes-total)",
+"session_time_left":	"$(session-time-left)",
+"uptime":	        	"$(uptime)",
+"action":               "onStatusQuery"
+}
+$(endif)
