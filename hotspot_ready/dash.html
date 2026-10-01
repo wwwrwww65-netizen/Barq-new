@@ -823,66 +823,6 @@
             </div>
         </div>
 
-        <!-- 8. إعدادات السرعات والبروفايلات -->
-        <div class="dash-card">
-            <div class="card-header-line">
-                <div class="card-header-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
-                </div>
-                <div class="card-header-title">السرعات وكروت السرعة الثابتة</div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="defaultSpeed">السرعة الافتراضية المحددة مسبقاً</label>
-                <select id="defaultSpeed" class="form-select">
-                    <option value="speed_economic">سرعة اقتصادية (speed_economic)</option>
-                    <option value="speed_normal">سرعة متوسطة (speed_normal)</option>
-                    <option value="speed_high">سرعة عالية (speed_high)</option>
-                    <option value="speed_very">سرعة فائقة (speed_very)</option>
-                    <option value="speed_gaming">🎮 ألعاب أونلاين (speed_gaming)</option>
-                </select>
-                <span class="form-hint">السرعة التي تظهر محددة تلقائياً للمستخدم عند فتح الصفحة.</span>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="fixedSpeedPrefixes">بادئة كروت السرعة الثابتة (مفصولة بفواصل)</label>
-                <input type="text" id="fixedSpeedPrefixes" class="form-input" placeholder="777">
-                <span class="form-hint">الكروت التي تبدأ بهذه الأرقام يتم إخفاء خيارات السرعة عنها وتثبيت سرعة خاصة بها.</span>
-            </div>
-        </div>
-
-        <!-- 9. إعدادات حقول إدخال الكرت -->
-        <div class="dash-card">
-            <div class="card-header-line">
-                <div class="card-header-icon">
-                    <svg viewBox="0 0 24 24"><path d="M20 7h-5V4c0-1.1-.9-2-2-2h-2c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM11 4h2v3h-2V4zm9 16H4V9h16v11z"/></svg>
-                </div>
-                <div class="card-header-title">إعدادات حقول إدخال الكرت</div>
-            </div>
-
-            <div class="toggle-row">
-                <div class="toggle-info">
-                    <div class="toggle-title">حذف المسافات الفارغة تلقائياً</div>
-                    <div class="toggle-desc">تنظيف الكرت عند اللصق أو الكتابة</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="inputRmWhiteSpaces">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="toggle-row">
-                <div class="toggle-info">
-                    <div class="toggle-title">تحويل الأرقام العربية إلى الإنجليزية</div>
-                    <div class="toggle-desc">تحويل (١٢٣) تلقائياً إلى (123) لمنع أخطاء التسجيل</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="inputToArabicNumbers">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
     </div>
 
     <!-- Bottom Save Floating CTA -->
@@ -963,15 +903,6 @@
             setVal('offersBadge', currentConfig.offersBadge || 'عرض مجاني');
             setChecked('loanButton', currentConfig['loan-button'] === true);
             setVal('loanText', currentConfig['loan-text'] || 'أهلاً بك زائرنا في شبكة برق نت');
-
-            // 6. Speeds & Fixed Speed Prefixes
-            setVal('defaultSpeed', currentConfig.defaultSpeed || 'speed_normal');
-            var prefixes = Array.isArray(currentConfig.fixedSpeedCardPrefixes) ? currentConfig.fixedSpeedCardPrefixes.join(', ') : (currentConfig.fixedSpeedCardPrefixes || '777');
-            setVal('fixedSpeedPrefixes', prefixes);
-
-            // 7. Input Settings
-            setChecked('inputRmWhiteSpaces', currentConfig['input-rm-white-spaces'] !== 0 && currentConfig['input-rm-white-spaces'] !== false);
-            setChecked('inputToArabicNumbers', currentConfig['input-to-arabic-numbers'] !== 0 && currentConfig['input-to-arabic-numbers'] !== false);
 
             // Render tables & dynamic lists
             renderPackagesTable();
@@ -1166,23 +1097,6 @@
             currentConfig.offersBadge = getVal('offersBadge');
             currentConfig['loan-button'] = getChecked('loanButton');
             currentConfig['loan-text'] = getVal('loanText');
-
-            // Speeds & Prefix sync
-            const defSpeed = getVal('defaultSpeed') || 'speed_normal';
-            currentConfig.defaultSpeed = defSpeed;
-            if (Array.isArray(currentConfig.speedOptions)) {
-                currentConfig.speedOptions.forEach(opt => {
-                    const isDef = opt.value === defSpeed;
-                    opt.selected = isDef;
-                    opt.isDefault = isDef;
-                });
-            }
-            const rawPrefixes = getVal('fixedSpeedPrefixes');
-            currentConfig.fixedSpeedCardPrefixes = rawPrefixes.split(',').map(s => s.trim()).filter(Boolean);
-
-            // Input formatting sync
-            currentConfig['input-rm-white-spaces'] = getChecked('inputRmWhiteSpaces') ? 1 : 0;
-            currentConfig['input-to-arabic-numbers'] = getChecked('inputToArabicNumbers') ? 1 : 0;
 
             // Synchronize profiles array with packages array
             currentConfig.profiles = (currentConfig.packages || []).map(p => ({

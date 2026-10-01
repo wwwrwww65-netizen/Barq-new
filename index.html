@@ -236,8 +236,8 @@
             opacity: 1;
             overflow: visible;
             transform: none;
-            margin-top: 6px;
-            margin-bottom: 12px;
+            margin-top: 2px;
+            margin-bottom: 5px;
             pointer-events: auto;
             visibility: visible;
             display: block;
@@ -248,11 +248,103 @@
             opacity: 1;
             overflow: visible;
             transform: none;
-            margin-top: 6px;
-            margin-bottom: 12px;
+            margin-top: 2px;
+            margin-bottom: 5px;
             pointer-events: auto;
             visibility: visible;
             display: block;
+        }
+
+        /* تقليل التباعد العمودي بين الحاويات في شاشة تسجيل الدخول إلى نصف القيمة الحالية وأكثر قليلاً */
+        #login .aloula-hero-card {
+            margin-bottom: 6px !important;
+        }
+        #login .ads-carousel-wrapper {
+            margin-bottom: 6px !important;
+        }
+        #login .section {
+            margin-bottom: 4px !important;
+        }
+        #login .speed-selection-popdown-container,
+        #login .speed-selection-popdown-container.speed-popdown-visible {
+            margin-top: 2px !important;
+            margin-bottom: 5px !important;
+        }
+        #login .speed-selection-outer-header {
+            margin-bottom: 3px !important;
+        }
+        #login .speed-selection-card {
+            margin-bottom: 5px !important;
+        }
+        #login .login-input-card {
+            margin-bottom: 6px !important;
+        }
+        #login .login-submit-wrapper {
+            margin-bottom: 10px !important;
+        }
+        #login .updates-toggle-card {
+            margin-bottom: 4px !important;
+        }
+        #login .customer-support-section {
+            margin-top: 5px !important;
+            margin-bottom: 3px !important;
+        }
+        #login .designer-credits-block {
+            margin-top: 3px !important;
+            margin-bottom: 2px !important;
+        }
+
+        /* إشعار تفعيل وإلغاء إيقاف التحديثات من أعلى الشاشة */
+        .action-notice-toast.notice-update-on {
+            background: #0C1322 !important;
+            border-color: rgba(0, 240, 255, 0.45) !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), 0 0 16px rgba(0, 240, 255, 0.22) !important;
+        }
+        .action-notice-toast.notice-update-on .toast-icon-wrap {
+            background: rgba(0, 240, 255, 0.14) !important;
+            border: 1px solid rgba(0, 240, 255, 0.42) !important;
+            border-radius: 10px !important;
+        }
+        .action-notice-toast.notice-update-on .toast-icon-wrap svg {
+            fill: #00F0FF !important;
+            filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.5)) !important;
+        }
+        .action-notice-toast.notice-update-on::after {
+            content: "";
+            position: absolute;
+            bottom: 0; right: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00F0FF 0%, #0072FF 100%) !important;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+            animation: toastTimer 3.5s linear forwards;
+        }
+
+        .action-notice-toast.notice-update-off {
+            background: #0C1322 !important;
+            border-color: rgba(56, 189, 248, 0.45) !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), 0 0 16px rgba(56, 189, 248, 0.22) !important;
+        }
+        .action-notice-toast.notice-update-off .toast-icon-wrap {
+            background: rgba(56, 189, 248, 0.14) !important;
+            border: 1px solid rgba(56, 189, 248, 0.42) !important;
+            border-radius: 10px !important;
+        }
+        .action-notice-toast.notice-update-off .toast-icon-wrap svg {
+            fill: #38BDF8 !important;
+            filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.5)) !important;
+        }
+        .action-notice-toast.notice-update-off::after {
+            content: "";
+            position: absolute;
+            bottom: 0; right: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #38BDF8 0%, #0284C7 100%) !important;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+            animation: toastTimer 3.5s linear forwards;
+        }
+
+        .update-notice-overlay {
+            display: none !important;
         }
 
         /* Fixed Speed Cards Lock Styling (كروت البادئة 777 والكروت الخاصة) */
@@ -485,6 +577,16 @@
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 240, 255, 0.3);
             position: relative;
             color: #FFFFFF;
+            max-height: min(85vh, calc(100dvh - 36px)) !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            overscroll-behavior: contain !important;
+        }
+        .popup-box {
+            max-height: min(85vh, calc(100dvh - 36px)) !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            overscroll-behavior: contain !important;
         }
         .update-notice-close {
             position: absolute;
@@ -931,7 +1033,7 @@
                         <!-- 1. حاوية اختيار السرعة (Speed Selection Container - ظاهرة فوق حقل إدخال الكرت دائماً) -->
                         <div class="speed-selection-popdown-container speed-popdown-visible" id="speedSelectionPopdown">
                             <!-- ترويسة اختيار السرعة -->
-                            <div class="speed-selection-outer-header" style="margin-bottom: 6px;">
+                            <div class="speed-selection-outer-header" style="margin-bottom: 3px;">
                                 <div class="card-section-title-wrap">
                                     <span class="card-section-icon thunder-icon-wrap">
                                         <svg viewBox="0 0 24 24" class="thunder-bolt-svg">
