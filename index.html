@@ -162,6 +162,36 @@
         .network-logo-frame, .network-status-badge {
             flex: 0 0 auto !important;
         }
+
+        /* تصغير نص اسم الشبكة (نت اللاسلكية) وتفتيح لونه ليصبح ناصعاً وأكثر وضوحاً وأناقة */
+        .brand-net-gold {
+            font-size: clamp(13.5px, 3.8vw, 17px) !important;
+            font-weight: 800 !important;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F0FDFF 35%, #E0F2FE 75%, #BAE6FD 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            color: #F0FDFF !important;
+            line-height: 1.2 !important;
+            letter-spacing: -0.2px !important;
+            white-space: nowrap !important;
+            margin-right: 6px !important;
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 14px rgba(0, 240, 255, 0.35)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.75)) !important;
+        }
+
+        .aloula-title-line {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+        }
+
+        .sub-dec-text {
+            font-size: clamp(10.5px, 2.9vw, 12px) !important;
+            font-weight: 700 !important;
+            color: #F8FAFC !important;
+            letter-spacing: 0.3px !important;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 0 1px 4px rgba(0, 0, 0, 0.85) !important;
+        }
     </style>
 
     <style>
@@ -286,16 +316,39 @@
             overflow: hidden !important;
         }
 
-        /* إخفاء الشريط السفلي تماماً في شاشة الحظر */
+        /* الشريط السفلي ثابت وظاهر دائماً في شاشة الدخول وشاشة الحالة وكافة النوافذ */
+        #bottomNav,
+        .bottom-nav-bar {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            z-index: 1000 !important;
+        }
+
+        /* الاستثناء الوحيد الصارم: إخفاء الشريط السفلي في شاشة الحظر فقط */
         html.is-blocked-mode #bottomNav,
         body.is-blocked-mode #bottomNav,
+        html.is-blocked-mode .bottom-nav-bar,
+        body.is-blocked-mode .bottom-nav-bar,
+        body.user-is-blocked #bottomNav,
+        body.user-is-blocked .bottom-nav-bar,
         body:has(#block.active) #bottomNav,
-        body:has(#block:not([style*="display: none"]):not(.inactive)) #bottomNav {
+        body:has(#block.active) .bottom-nav-bar {
             display: none !important;
             visibility: hidden !important;
             opacity: 0 !important;
             pointer-events: none !important;
-            transform: translateY(100%) !important;
+            transform: translateX(50%) translateY(120px) !important;
+        }
+
+        /* إخفاء ناعم عند فتح لوحة مفاتيح الجوال النصية فقط */
+        body.keyboard-open #bottomNav,
+        #bottomNav.hidden-keyboard {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transform: translateX(50%) translateY(120px) !important;
         }
 
         /* الإشعار المنبثق العلوي المخصص الأنيق */
@@ -730,7 +783,7 @@
                                             </svg>
                                         </span>
                                         <span class="brand-logo-wrap" id="brandLogoWrap">
-                                            <img src="img/barq.png" alt="شعار برق" class="brand-logo-img" id="networkHeaderLogo" data-network-logo="true" />
+                                            <img src="img/barq.png" alt="شعار برق" class="brand-logo-img" id="networkHeaderLogo" data-network-logo="true" fetchpriority="high" decoding="async" onerror="if(this.src.indexOf('img/1.png')===-1)this.src='img/1.png';" />
                                         </span>
                                         <span class="brand-net-gold">نت</span>
                                     </div>
@@ -754,15 +807,8 @@
                                             var netName = cfg.siteName || (window.hotspotConfig && window.hotspotConfig["network-name"] ? window.hotspotConfig["network-name"].trim() : 'برق نت');
                                             netName = (netName || 'برق نت').trim();
                                             var parts = netName.split(/\s+/);
-                                            var prefix = 'برق';
-                                            var suffix = 'نت';
-                                            if (parts.length > 1) {
-                                                suffix = parts.pop();
-                                                prefix = parts.join(' ');
-                                            } else {
-                                                prefix = netName;
-                                                suffix = '';
-                                            }
+                                            var prefix = parts[0] || netName;
+                                            var suffix = parts.slice(1).join(' ');
                                             var prefixEl = document.querySelector('[data-network-name-prefix="true"]');
                                             var suffixEl = document.querySelector('.brand-net-gold');
                                             if (prefixEl && !logoEl) prefixEl.textContent = prefix;
@@ -840,7 +886,7 @@
                                     <img class="im3" src="./adimg/3.jpg" alt="إعلان 1" fetchpriority="high" decoding="async">
                                 </div>
                                 <div class="carousel-slide">
-                                    <img class="im4" src="./adimg/4.jpg" alt="إعلان 2" loading="lazy" decoding="async">
+                                    <img class="im4" src="./adimg/4.jpg" alt="إعلان 2" loading="eager" decoding="async">
                                 </div>
                             </div>
                             <button class="carousel-nav-btn prev" id="carouselPrev" aria-label="السابق">❮</button>
@@ -1618,7 +1664,7 @@
                 </div>
 
                 <!-- 2026 MODAL: BLOCKED USER SCREEN (#block) -->
-                <div class="app" id="block">
+                <div class="app inactive" id="block" style="display: none;">
                     <div class="modal-sheet-card">
                         <div class="block-card-warning">
                             <div class="block-icon-pulse">

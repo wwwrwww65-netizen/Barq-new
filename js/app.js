@@ -232,7 +232,7 @@
 ;
 document.addEventListener('DOMContentLoaded', function () {
 
-            // 1. CAROUSEL SEAMLESS INFINITE LOOP, AUTOPLAY & DYNAMIC AUTO-DISCOVERY
+            // 1. CAROUSEL SEAMLESS INFINITE LOOP, AUTOPLAY & RELIABLE ASYNC AUTO-DISCOVERY
             const track = document.getElementById('carouselTrack');
             const dotsContainer = document.getElementById('carouselDots');
             const prevBtn = document.getElementById('carouselPrev');
@@ -245,19 +245,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (cfg.imageV === false) {
                     if (carouselWrapper) carouselWrapper.style.display = 'none';
                 } else {
-                    function probeImage(src) {
+                    if (carouselWrapper) carouselWrapper.style.display = '';
+
+                    let activeCarouselState = null;
+
+                    function probeImage(src, timeoutMs) {
+                        timeoutMs = timeoutMs || 3500;
                         return new Promise(resolve => {
                             const tempImg = new Image();
                             let done = false;
                             const finish = (val) => {
                                 if (done) return;
                                 done = true;
+                                tempImg.onload = null;
+                                tempImg.onerror = null;
                                 resolve(val);
                             };
-                            tempImg.onload = () => finish(src);
+                            tempImg.onload = () => {
+                                if (tempImg.naturalWidth > 0 && tempImg.naturalHeight > 0) {
+                                    finish(src);
+                                } else {
+                                    finish(null);
+                                }
+                            };
                             tempImg.onerror = () => finish(null);
                             tempImg.src = src;
-                            setTimeout(() => finish(null), 350);
+
+                            // If already complete in cache:
+                            if (tempImg.complete) {
+                                if (tempImg.naturalWidth > 0) {
+                                    finish(src);
+                                    return;
+                                }
+                            }
+                            setTimeout(() => finish(null), timeoutMs);
                         });
                     }
 
@@ -269,22 +290,40 @@ document.addEventListener('DOMContentLoaded', function () {
                             checkPromises.push(
                                 probeImage(`./adimg/${i}.jpg`).then(async res => {
                                     if (res) return res;
-                                    return probeImage(`./adimg/${i}.png`);
+                                    return probeImage(`./adimg/${i}.png`, 2000);
                                 })
                             );
                         }
 
-                        const results = await Promise.all(checkPromises);
-                        return results.filter(Boolean);
+                        try {
+                            const results = await Promise.all(checkPromises);
+                            const valid = results.filter(Boolean);
+                            if (valid.length > 0) return valid;
+                        } catch (e) {}
+
+                        // Fallback: keep existing slides or default to 3.jpg & 4.jpg
+                        return ['./adimg/3.jpg', './adimg/4.jpg'];
                     }
 
                     function buildAndStartCarousel(images) {
-                        if (!images || images.length === 0) {
+                        const currentCfg = window.siteConfig || {};
+                        if (currentCfg.imageV === false) {
                             if (carouselWrapper) carouselWrapper.style.display = 'none';
                             return;
                         }
 
+                        // Robust fallback: NEVER hide carousel if images array is empty or fails!
+                        if (!images || images.length === 0) {
+                            const existingImgs = Array.from(track.querySelectorAll('img')).map(img => img.getAttribute('src')).filter(Boolean);
+                            images = existingImgs.length > 0 ? existingImgs : ['./adimg/3.jpg', './adimg/4.jpg'];
+                        }
+
                         if (carouselWrapper) carouselWrapper.style.display = '';
+
+                        // If previous carousel is running, clean it up cleanly
+                        if (activeCarouselState && typeof activeCarouselState.destroy === 'function') {
+                            activeCarouselState.destroy();
+                        }
 
                         // Clear and build slides
                         track.innerHTML = '';
@@ -292,14 +331,20 @@ document.addEventListener('DOMContentLoaded', function () {
                             const slide = document.createElement('div');
                             slide.className = 'carousel-slide';
                             const img = document.createElement('img');
+                            img.className = 'im' + (idx + 1);
                             img.src = src;
                             img.alt = 'إعلان ' + (idx + 1);
                             img.decoding = 'async';
+                            img.loading = 'eager'; // Always load eager so carousel slides are never blank
                             if (idx === 0) {
                                 img.setAttribute('fetchpriority', 'high');
-                            } else {
-                                img.setAttribute('loading', 'lazy');
                             }
+                            img.onerror = function() {
+                                // If image fails to load, gracefully fall back to default
+                                if (this.src.indexOf('adimg/3.jpg') === -1 && this.src.indexOf('adimg/4.jpg') === -1) {
+                                    this.src = './adimg/3.jpg';
+                                }
+                            };
                             slide.appendChild(img);
                             track.appendChild(slide);
                         });
@@ -327,6 +372,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             track.style.transform = 'translateX(0%)';
                             if (prevBtn) prevBtn.style.display = 'none';
                             if (nextBtn) nextBtn.style.display = 'none';
+                            activeCarouselState = {
+                                images: images.slice(),
+                                destroy: function() {}
+                            };
                             return;
                         }
 
@@ -375,11 +424,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             isTransitioning = false;
                         }
 
-                        track.addEventListener('transitionend', (e) => {
+                        function onTransitionEnd(e) {
                             if (e.target === track && e.propertyName === 'transform') {
                                 checkCloneReset();
                             }
-                        });
+                        }
+
+                        track.addEventListener('transitionend', onTransitionEnd);
 
                         function goToSlide(index, animated = true) {
                             currentIndex = index;
@@ -423,8 +474,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         }
 
-                        if (prevBtn) prevBtn.onclick = () => { prevSlide(); startAutoplay(); };
-                        if (nextBtn) nextBtn.onclick = () => { nextSlide(); startAutoplay(); };
+                        const onPrevClick = () => { prevSlide(); startAutoplay(); };
+                        const onNextClick = () => { nextSlide(); startAutoplay(); };
+
+                        if (prevBtn) prevBtn.onclick = onPrevClick;
+                        if (nextBtn) nextBtn.onclick = onNextClick;
 
                         dots.forEach((dot, idx) => {
                             dot.onclick = () => {
@@ -450,11 +504,36 @@ document.addEventListener('DOMContentLoaded', function () {
                         };
 
                         startAutoplay();
+
+                        activeCarouselState = {
+                            images: images.slice(),
+                            destroy: function() {
+                                stopAutoplay();
+                                clearTimeout(transitionSafetyTimeout);
+                                track.removeEventListener('transitionend', onTransitionEnd);
+                                if (prevBtn) prevBtn.onclick = null;
+                                if (nextBtn) nextBtn.onclick = null;
+                                carouselContainer.ontouchstart = null;
+                                carouselContainer.ontouchend = null;
+                            }
+                        };
                     }
 
-                    // Run automatic discovery on start
+                    // 1. Start carousel IMMEDIATELY with initial/fallback images so user NEVER experiences missing banner or blank delay
+                    const initialDOMImages = Array.from(track.querySelectorAll('img')).map(img => img.getAttribute('src')).filter(Boolean);
+                    const startImages = initialDOMImages.length > 0 ? initialDOMImages : ['./adimg/3.jpg', './adimg/4.jpg'];
+                    buildAndStartCarousel(startImages);
+
+                    // 2. Run discovery in background with resilient timeout. If additional or different images found, update seamlessly!
                     discoverAdImages().then(validImgs => {
-                        buildAndStartCarousel(validImgs);
+                        if (!validImgs || validImgs.length === 0) return;
+                        const currentImgs = activeCarouselState ? activeCarouselState.images : [];
+                        const isSame = currentImgs.length === validImgs.length && currentImgs.every((src, i) => src === validImgs[i]);
+                        if (!isSame) {
+                            buildAndStartCarousel(validImgs);
+                        }
+                    }).catch(() => {
+                        // Keep current carousel running
                     });
                 }
             }
