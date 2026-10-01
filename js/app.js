@@ -618,6 +618,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 void modal.offsetWidth;
                 modal.classList.add('active');
 
+                if (modal.id === 'block') {
+                    try {
+                        document.documentElement.classList.add('is-blocked-mode');
+                        document.body.classList.add('is-blocked-mode');
+                        const bNav = document.getElementById('bottomNav');
+                        if (bNav) bNav.style.setProperty('display', 'none', 'important');
+                    } catch (e) {}
+                }
+
                 // Instant sync for dynamic modal contents (price table, sales points, status screen, etc.)
                 if (modal.id === 'price' || modal.id === 'sell-point' || modal.id === 'offers-modal' || modal.id === 'status' || modal.id === 'status-speed-modal') {
                     if (typeof syncAllSiteConfigs === 'function') {
@@ -668,6 +677,15 @@ document.addEventListener('DOMContentLoaded', function () {
                             target.style.display = 'none';
                         }
                     }, 240);
+
+                    if (target.id === 'block') {
+                        try {
+                            document.documentElement.classList.remove('is-blocked-mode');
+                            document.body.classList.remove('is-blocked-mode');
+                            const bNav = document.getElementById('bottomNav');
+                            if (bNav) bNav.style.removeProperty('display');
+                        } catch (e) {}
+                    }
                 });
 
                 const isStatusActive = document.getElementById('status')?.classList.contains('active');
@@ -1716,13 +1734,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     const usernameInput = document.querySelector('input[name="username"]') || document.querySelector('input[username-field]');
 
                     if (cardsList.length > 0) {
-                        const selectedCard = cardsList[prevCardCycleIndex % cardsList.length];
-                        prevCardCycleIndex++;
+                        const currentInputVal = usernameInput ? usernameInput.value.trim() : '';
+                        let targetIndex = prevCardCycleIndex % cardsList.length;
+                        if (cardsList.length > 1 && cardsList[targetIndex] === currentInputVal) {
+                            prevCardCycleIndex++;
+                            targetIndex = prevCardCycleIndex % cardsList.length;
+                        }
+                        const selectedCard = cardsList[targetIndex];
+                        prevCardCycleIndex = (targetIndex + 1) % cardsList.length;
 
                         if (usernameInput) {
                             usernameInput.value = selectedCard;
                             usernameInput.dispatchEvent(new Event('input', { bubbles: true }));
                             usernameInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+
+                        if (typeof window.applySpeedLockForCard === 'function') {
+                            window.applySpeedLockForCard(selectedCard);
                         }
 
                         // Success button feedback

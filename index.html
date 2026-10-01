@@ -286,6 +286,18 @@
             overflow: hidden !important;
         }
 
+        /* إخفاء الشريط السفلي تماماً في شاشة الحظر */
+        html.is-blocked-mode #bottomNav,
+        body.is-blocked-mode #bottomNav,
+        body:has(#block.active) #bottomNav,
+        body:has(#block:not([style*="display: none"]):not(.inactive)) #bottomNav {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: translateY(100%) !important;
+        }
+
         /* الإشعار المنبثق العلوي المخصص الأنيق */
         .top-notification-toast {
             position: fixed;

@@ -181,7 +181,7 @@ app.all(['/alogin', '/alogin.html'], (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     return res.json({
       logged_in: simulatedSession.logged_in ? "yes" : "no",
-      username: simulatedSession.username || "770807777",
+      username: simulatedSession.username || "",
       domain: simulatedSession.domain || getConfigDefaultSpeed(),
       link_login_only: "http://1.1.1.1/login",
       ip: simulatedSession.ip,
@@ -195,7 +195,7 @@ app.all(['/alogin', '/alogin.html'], (req, res) => {
 // MikroTik Hotspot status JSON / HTML mock handler
 app.all(['/status', '/status.html'], (req, res) => {
   const isAjax = isMikrotikAjax(req);
-  const username = req.query.username || simulatedSession.username || "770807777";
+  const username = req.query.username || simulatedSession.username || "";
   const defaultDomain = getConfigDefaultSpeed();
   const currentSpeed = req.query.domain || req.body?.domain || simulatedSession.domain || defaultDomain || "";
 
