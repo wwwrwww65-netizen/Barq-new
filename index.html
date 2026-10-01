@@ -48,20 +48,24 @@
             margin: 0;
             padding: 0;
             min-height: 100%;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-y pinch-zoom;
         }
 
         /* Fast, Native Fluid Scrolling */
         html {
             scroll-behavior: auto !important;
-            overflow-x: hidden;
-            overflow-y: auto;
+            -webkit-text-size-adjust: 100%;
+            height: auto !important;
+            min-height: 100% !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
         }
 
         body {
-            overflow-x: hidden;
-            overflow-y: auto;
+            height: auto !important;
+            min-height: 100% !important;
+            overflow-x: hidden !important;
+            overflow-y: visible !important;
+            -webkit-overflow-scrolling: touch !important;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             padding-top: calc(6px + env(safe-area-inset-top, 0px)) !important;
@@ -92,9 +96,7 @@
         }
 
         .aloula-hero-card,
-        .status-header-card,
-        .compact-speed-card,
-        .modal-sheet-card {
+        .status-header-card {
             margin-top: 4px !important;
         }
 
@@ -211,11 +213,191 @@
         }
 
         /* ========================================================================= */
-        /* 60fps / 120fps ProMotion Hardware Acceleration & Scroll Fluidity Guarantee */
+        /* 60fps / 120fps ProMotion Hardware Acceleration & Natural Scrolling */
         /* ========================================================================= */
         html, body {
             -webkit-overflow-scrolling: touch !important;
-            overscroll-behavior-y: none !important;
+        }
+
+        /* Ensure #status screen is in-flow and fully scrollable from top to bottom */
+        #status,
+        .app#status,
+        div#status,
+        div#status.active,
+        .status-main-screen#status {
+            position: relative !important;
+            inset: auto !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            min-height: auto !important;
+            max-height: none !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            z-index: 2 !important;
+            overflow: visible !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            transform: none !important;
+            -webkit-transform: none !important;
+        }
+
+        #status:not(.active):not([style*="display: block"]) {
+            display: none !important;
+        }
+
+        #status.active,
+        body.has-active-session #status,
+        html.initial-status-mode #status {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
+        #status .modal-sheet-card {
+            position: relative !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
+        /* ========================================================================= */
+        /* 100% Perfect Viewport Centering for All Popups & Modal Windows */
+        /* ========================================================================= */
+        .app:not(#status),
+        #price,
+        #sell-point,
+        #loan,
+        #speed-modal,
+        #status-speed-modal,
+        #app-store,
+        #block {
+            display: none;
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            z-index: 99999 !important;
+            background: rgba(3, 7, 18, 0.78) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            padding: 16px !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }
+
+        .app:not(#status).active,
+        #price.active,
+        #sell-point.active,
+        #loan.active,
+        #speed-modal.active,
+        #status-speed-modal.active,
+        #app-store.active,
+        #block.active,
+        .app[style*="display: flex"],
+        .app[style*="display: block"]:not(#status) {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .app:not(#status) .modal-sheet-card,
+        #speed-modal .modal-sheet-card,
+        #status-speed-modal .modal-sheet-card,
+        #price .modal-sheet-card,
+        #sell-point .modal-sheet-card,
+        #loan .modal-sheet-card,
+        #app-store .modal-sheet-card,
+        #block .modal-sheet-card {
+            position: relative !important;
+            width: 92% !important;
+            max-width: 420px !important;
+            margin: auto !important;
+            max-height: min(85vh, calc(100dvh - 36px)) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background: linear-gradient(165deg, #142038, #0f182b) !important;
+            border: 1.5px solid rgba(0, 240, 255, 0.35) !important;
+            border-radius: 20px !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 240, 255, 0.25) !important;
+            padding: 18px 16px !important;
+            box-sizing: border-box !important;
+            transform: none !important;
+        }
+
+        /* Generic Center Alignment for All Alert, Confirmation, and System Overlays */
+        .popup-overlay,
+        #popupError,
+        .update-notice-overlay,
+        #updateNotice,
+        .modal,
+        #cardsModal,
+        .instructions-modal,
+        .custom-modal,
+        .loyalty-modal {
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            z-index: 999999 !important;
+            background: rgba(3, 7, 18, 0.8) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            padding: 16px !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+        }
+
+        .popup-overlay[style*="display: flex"],
+        .popup-overlay[style*="display: block"],
+        .popup-overlay.active,
+        .update-notice-overlay.on,
+        .update-notice-overlay[style*="display: flex"],
+        .update-notice-overlay[style*="display: block"],
+        .modal.active,
+        .modal[style*="display: flex"],
+        .modal[style*="display: block"],
+        .instructions-modal.active,
+        .custom-modal.active,
+        .loyalty-modal.active {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .popup-box,
+        .update-notice-box,
+        .modal-content,
+        .instructions-modal-content,
+        .custom-modal-content {
+            margin: auto !important;
+            position: relative !important;
+            max-width: 380px !important;
+            width: 92% !important;
         }
 
         /* Isolate paint and layout contexts so animations never trigger full-page repaints */
@@ -1597,7 +1779,7 @@
                 </div>
 
                 <!-- 2026 STATUS DASHBOARD SCREEN (#status) -->
-                <div class="app" id="status">
+                <div class="status-main-screen" id="status">
                     <div class="modal-sheet-card" style="max-height: none;">
 
                         <div class="status-header-card">
