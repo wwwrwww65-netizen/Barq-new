@@ -545,17 +545,11 @@ button#btn-whats-new .btn-icon {
   overflow: hidden;
   white-space: nowrap;
   position: relative;
-  container-type: inline-size;
-  mask-image: linear-gradient(to right,
-      transparent,
-      black 15px,
-      black calc(100% - 15px),
-      transparent);
-  -webkit-mask-image: linear-gradient(to right,
-      transparent,
-      black 15px,
-      black calc(100% - 15px),
-      transparent);
+  contain: layout paint;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* النص الإخباري المتحرك */
@@ -567,6 +561,8 @@ button#btn-whats-new .btn-icon {
   color: #881337 !important;
   direction: rtl;
   will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   animation: marqueeDynamic 26s linear infinite;
 }
 

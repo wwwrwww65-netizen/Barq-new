@@ -441,12 +441,14 @@
         .status-header-card,
         .login-input-card,
         .speed-selection-card,
-        .customer-support-section {
+        .customer-support-section,
+        .ticker-container {
             contain: layout paint style !important;
             transform: translateZ(0) !important;
             -webkit-transform: translateZ(0) !important;
             backface-visibility: hidden !important;
             -webkit-backface-visibility: hidden !important;
+            isolation: isolate !important;
         }
 
         /* Promote all active animated elements to dedicated GPU composite layers without locking keyframe transforms */
@@ -470,6 +472,28 @@
             backface-visibility: hidden !important;
             -webkit-backface-visibility: hidden !important;
             will-change: transform, opacity !important;
+        }
+
+        .marquee {
+            pointer-events: auto !important;
+            display: inline-block !important;
+            white-space: nowrap !important;
+            will-change: transform !important;
+            backface-visibility: hidden !important;
+            -webkit-backface-visibility: hidden !important;
+        }
+
+        .ticker-content-track {
+            contain: layout paint !important;
+            overflow: hidden !important;
+            white-space: nowrap !important;
+            position: relative !important;
+            transform: translateZ(0) !important;
+            -webkit-transform: translateZ(0) !important;
+            backface-visibility: hidden !important;
+            -webkit-backface-visibility: hidden !important;
+            mask-image: none !important;
+            -webkit-mask-image: none !important;
         }
 
         /* 60fps / 120fps Ultra-smooth mobile scrolling: Disable real-time backdrop blur on cards */
@@ -1297,26 +1321,13 @@
                             </svg>
                         </div>
 
-                        <!-- الشريط العلوي (حالة متصل مع أنميشن الرادار وموجات الواي فاي) -->
+                        <!-- الشريط العلوي (حالة متصل مع النقطة الخضراء) -->
                         <div class="aloula-top-bar">
                             <div class="network-status-badge aloula-status-pill">
                                 <span class="status-live-pulse-dot">
                                     <span class="status-pulse-ring"></span>
                                     <span class="status-pulse-core"></span>
                                 </span>
-                                <span class="status-wifi-wave-icon">
-                                    <svg viewBox="0 0 24 24" class="wifi-svg-animated" width="16" height="16"
-                                        fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path class="wifi-arc wifi-arc-3" d="M4 7.5C7.4 4.5 12.6 4.5 16 7.5" />
-                                        <path class="wifi-arc wifi-arc-2" d="M6.5 10.5C8.8 8.5 13.2 8.5 15.5 10.5" />
-                                        <path class="wifi-arc wifi-arc-1" d="M9.5 13.5C10.5 12.5 12.5 12.5 13.5 13.5" />
-                                        <circle class="wifi-dot" cx="11.5" cy="16.5" r="1.5" fill="currentColor" stroke="none" />
-                                    </svg>
-                                </span>
-                                <svg viewBox="0 0 24 24" class="status-live-thunder-spark" aria-hidden="true">
-                                    <path d="M11 2L5 13h5l-1 7 8-9h-5l1-7z"/>
-                                </svg>
                                 <span class="status-badge-text">متصل</span>
                             </div>
                         </div>

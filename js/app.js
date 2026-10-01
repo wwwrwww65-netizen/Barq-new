@@ -2238,7 +2238,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // =========================================================================
-        // AUTOMATIC DYNAMIC MARQUEE SPEED & EXACT BOUNDARIES ENGINE (FLICKER-FREE)
+        // AUTOMATIC DYNAMIC MARQUEE SPEED & EXACT BOUNDARIES ENGINE (60FPS/120FPS FLUID)
         // =========================================================================
         (function initAutoDynamicMarquee() {
             let lastAppliedKey = '';
@@ -2246,60 +2246,100 @@ document.addEventListener('DOMContentLoaded', function () {
 
             function setupMarquee() {
                 if (isCalculating) return;
-                const track = document.querySelector('.ticker-content-track');
-                const marquee = document.querySelector('.marquee');
-                if (!track || !marquee) return;
+                const tracks = document.querySelectorAll('.ticker-content-track');
+                const marquees = document.querySelectorAll('.marquee');
+                if (!tracks.length || !marquees.length) return;
 
-                const text = (marquee.textContent || marquee.innerText || '').trim();
+                const firstMarquee = marquees[0];
+                const text = (firstMarquee.textContent || firstMarquee.innerText || '').trim();
                 if (!text || text.includes('{{news-line}}')) return;
 
                 isCalculating = true;
 
-                // Measure track and text width without resetting animation
-                const trackWidth = track.clientWidth || track.offsetWidth || 380;
-                const textWidth = marquee.scrollWidth || marquee.offsetWidth || 1000;
+                // Measure track and text width on next frame to prevent layout thrashing
+                requestAnimationFrame(function() {
+                    let maxTrackWidth = 0;
+                    tracks.forEach(function(t) {
+                        const w = t.offsetWidth || t.clientWidth || (t.getBoundingClientRect ? t.getBoundingClientRect().width : 0);
+                        if (w > maxTrackWidth) maxTrackWidth = Math.round(w);
+                    });
+                    if (!maxTrackWidth || maxTrackWidth < 60) {
+                        maxTrackWidth = Math.min(window.innerWidth || 380, 480);
+                    }
 
-                // Exact pixel coordinates:
-                // Start: Right edge aligns with track left boundary (first letter enters immediately)
-                const startX = -(trackWidth + 6);
-                // End: Left edge fully clears track right boundary (last letter exits completely)
-                const endX = textWidth + 16;
-                const totalDistance = endX - startX;
+                    let maxTextWidth = 0;
+                    marquees.forEach(function(m) {
+                        const w = m.scrollWidth || m.offsetWidth;
+                        if (w > maxTextWidth) maxTextWidth = Math.round(w);
+                    });
+                    if (!maxTextWidth || maxTextWidth < 100) {
+                        try {
+                            const dummy = document.createElement('span');
+                            dummy.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-size:0.88rem;font-weight:700;font-family:Almarai,sans-serif;direction:rtl;';
+                            dummy.textContent = text;
+                            document.body.appendChild(dummy);
+                            maxTextWidth = dummy.offsetWidth || 1000;
+                            document.body.removeChild(dummy);
+                        } catch (e) {
+                            maxTextWidth = 1000;
+                        }
+                    }
 
-                // Constant readable velocity (52px per second regardless of text length)
-                const PIXELS_PER_SECOND = 52;
-                const duration = Math.max(6, (totalDistance / PIXELS_PER_SECOND)).toFixed(2);
+                    const trackWidth = maxTrackWidth;
+                    const textWidth = maxTextWidth;
 
-                const cacheKey = `${startX}_${endX}_${duration}_${text.length}`;
-                if (lastAppliedKey === cacheKey) {
+                    // Exact pixel coordinates:
+                    // Start: Right edge aligns with track left boundary
+                    const startX = -(trackWidth + 8);
+                    // End: Left edge fully clears track right boundary
+                    const endX = textWidth + 18;
+                    const totalDistance = endX - startX;
+
+                    // Constant readable velocity (~48px per second for ultra-smooth fluid flow)
+                    const PIXELS_PER_SECOND = 48;
+                    const duration = Math.max(8, (totalDistance / PIXELS_PER_SECOND)).toFixed(2);
+
+                    const cacheKey = `${startX}_${endX}_${duration}_${text.length}`;
+                    if (lastAppliedKey === cacheKey) {
+                        isCalculating = false;
+                        return; // No layout change -> Do NOT disturb running animation
+                    }
+
+                    lastAppliedKey = cacheKey;
+
+                    let dynamicStyle = document.getElementById('dynamic-marquee-engine-style');
+                    if (!dynamicStyle) {
+                        dynamicStyle = document.createElement('style');
+                        dynamicStyle.id = 'dynamic-marquee-engine-style';
+                        document.head.appendChild(dynamicStyle);
+                    }
+
+                    dynamicStyle.textContent = `
+                        @keyframes marqueeDynamic {
+                            0% { transform: translate3d(${startX}px, 0, 0); }
+                            100% { transform: translate3d(${endX}px, 0, 0); }
+                        }
+                        .marquee {
+                            display: inline-block !important;
+                            white-space: nowrap !important;
+                            will-change: transform !important;
+                            backface-visibility: hidden !important;
+                            -webkit-backface-visibility: hidden !important;
+                            animation: marqueeDynamic ${duration}s linear infinite !important;
+                        }
+                        .marquee:hover {
+                            animation-play-state: paused !important;
+                        }
+                    `;
+
                     isCalculating = false;
-                    return; // No layout change -> Do NOT disturb running animation
-                }
-
-                lastAppliedKey = cacheKey;
-
-                let dynamicStyle = document.getElementById('dynamic-marquee-engine-style');
-                if (!dynamicStyle) {
-                    dynamicStyle = document.createElement('style');
-                    dynamicStyle.id = 'dynamic-marquee-engine-style';
-                    document.head.appendChild(dynamicStyle);
-                }
-
-                dynamicStyle.textContent = `
-                    @keyframes marqueeDynamic {
-                        0% { transform: translate3d(${startX}px, 0, 0); }
-                        100% { transform: translate3d(${endX}px, 0, 0); }
-                    }
-                    .marquee {
-                        animation: marqueeDynamic ${duration}s linear infinite !important;
-                    }
-                `;
-
-                isCalculating = false;
+                });
             }
 
+            window.setupMarquee = setupMarquee;
+
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', setupMarquee);
+                document.addEventListener('DOMContentLoaded', setupMarquee, { passive: true });
             } else {
                 setupMarquee();
             }
@@ -2309,22 +2349,22 @@ document.addEventListener('DOMContentLoaded', function () {
             let resizeDebounce = null;
             window.addEventListener('resize', function () {
                 clearTimeout(resizeDebounce);
-                resizeDebounce = setTimeout(setupMarquee, 150);
+                resizeDebounce = setTimeout(setupMarquee, 160);
             }, { passive: true });
 
             if (document.fonts && document.fonts.ready) {
                 document.fonts.ready.then(setupMarquee);
             }
 
-            const marqueeEl = document.querySelector('.marquee');
-            if (marqueeEl) {
+            const marquees = document.querySelectorAll('.marquee');
+            marquees.forEach(function(mEl) {
                 let mutationDebounce = null;
                 const observer = new MutationObserver(function () {
                     clearTimeout(mutationDebounce);
-                    mutationDebounce = setTimeout(setupMarquee, 60);
+                    mutationDebounce = setTimeout(setupMarquee, 80);
                 });
-                observer.observe(marqueeEl, { childList: true, characterData: true, subtree: true });
-            }
+                observer.observe(mEl, { childList: true, characterData: true, subtree: true });
+            });
         })();
 ;
 (function() {
