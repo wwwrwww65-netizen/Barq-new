@@ -43,7 +43,7 @@
                               radial-gradient(ellipse at 85% 25%, rgba(0, 114, 255, 0.1) 0%, transparent 45%),
                               radial-gradient(ellipse at 15% 45%, rgba(255, 230, 0, 0.05) 0%, transparent 40%),
                               radial-gradient(ellipse at 50% 90%, rgba(4, 10, 24, 0.95) 0%, transparent 70%) !important;
-            background-attachment: fixed !important;
+            background-attachment: scroll !important;
             color: #ffffff !important;
             margin: 0;
             padding: 0;
@@ -52,7 +52,7 @@
             touch-action: pan-y pinch-zoom;
         }
 
-        /* Hardware Accelerated Smooth Scroll without Main-Thread Blocking */
+        /* Fast, Native Fluid Scrolling */
         html {
             scroll-behavior: auto !important;
             overflow-x: hidden;
@@ -64,7 +64,114 @@
             overflow-y: auto;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            transform: translateZ(0);
+        }
+
+        /* Responsive, elegant mobile card container - Prevents stretching edge-to-edge across phone */
+        .container {
+            position: relative !important;
+            z-index: 1 !important;
+            width: 94% !important;
+            max-width: 420px !important;
+            margin: 0 auto !important;
+            min-height: auto !important;
+            box-sizing: border-box !important;
+            padding: 12px 6px calc(85px + env(safe-area-inset-bottom, 0px)) 6px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+        }
+
+        @media screen and (max-width: 480px) {
+            .container {
+                width: 93% !important;
+                max-width: 410px !important;
+                margin: 0 auto !important;
+                padding: 10px 4px calc(80px + env(safe-area-inset-bottom, 0px)) 4px !important;
+            }
+        }
+
+        /* Performance Optimization: Disable CPU/GPU-heavy continuous filter animations for ultra-fast response */
+        .thunder-arc-bolt,
+        .card-thunder-corner,
+        .btn-thunder-spark,
+        .status-thunder-arc,
+        .gauge-thunder-arc,
+        .pod-thunder-bolt,
+        .aloula-feat-lightning .thunder-pulse-icon,
+        .thunder-icon-wrap .thunder-bolt-svg,
+        .thunder-badge .thunder-mini-spark,
+        .status-live-thunder-spark,
+        .status-title-thunder,
+        .thunder-session-dot,
+        .flame-ember,
+        .lightning-spark,
+        body::before,
+        .aloula-hero-card::after,
+        .flame-glow-base,
+        .lightning-glow-base,
+        .brand-name-white .name-text,
+        .brand-net-gold,
+        .sub-dec-dot,
+        .sub-dec-lightning,
+        .halo-ring-outer,
+        .aloula-halo-wifi-svg .wifi-sig,
+        .lightning-center-bolt,
+        .login-btn-lightning-icon {
+            animation: none !important;
+            will-change: auto !important;
+        }
+
+        .flame-ember,
+        .lightning-spark {
+            display: none !important;
+        }
+
+        .thunder-arc-bolt,
+        .card-thunder-corner,
+        .btn-thunder-spark,
+        .status-thunder-arc,
+        .gauge-thunder-arc,
+        .pod-thunder-bolt {
+            opacity: 0.88 !important;
+        }
+
+        /* 60fps / 120fps Ultra-smooth mobile scrolling: Disable real-time backdrop blur on cards */
+        .app-card,
+        .aloula-hero-card,
+        .customer-support-section,
+        .login-input-card,
+        .speed-selection-card,
+        .toggle-container-modern,
+        .points-notice-alert,
+        .ticker-container {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        /* Fixed Floating Toast: Always visible at the top of the mobile screen regardless of scroll position */
+        .error-container {
+            position: fixed !important;
+            top: -260px !important;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) !important;
+            z-index: 100000 !important;
+            width: calc(100% - 24px) !important;
+            max-width: 420px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            transition: all 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            pointer-events: none !important;
+        }
+
+        .error-container.active {
+            top: calc(14px + env(safe-area-inset-top, 0px)) !important;
+            pointer-events: auto !important;
+        }
+
+        .error-container.zoom {
+            transform: translateX(-50%) scale(1.02) !important;
         }
 
         input, select, textarea, button {
@@ -88,6 +195,13 @@
     
     <!-- Core Configuration File Loaded Synchronously in Head -->
     <script src="config.js"></script>
+    <!-- MikroTik Router Native Session Data (Server-Evaluated on RouterOS) -->
+    <script id="mikrotik-session-meta">
+        window.__MT_LOGGED_IN = "$(logged-in)";
+        window.__MT_USERNAME = "$(username)";
+        window.__MT_IP = "$(ip)";
+        window.__MT_MAC = "$(mac-esc)";
+    </script>
     <script>
         (function() {
             var cfg = window.siteConfig || {};
@@ -95,16 +209,46 @@
             document.title = 'شبكة ' + netName + ' اللاسلكية';
 
             // Zero-Flicker instant state detection:
-            // If the user already has an active logged-in session, immediately show status screen
-            // and hide login screen before the DOM even begins rendering to prevent ANY flicker or jump.
+            // Synchronously determines whether to show Login or Status before the DOM begins rendering.
             try {
-                var hasActiveSession = sessionStorage.getItem("hotspot_active_session") === "1" || /(?:^|;\s*)hotspot_active_session=1/.test(document.cookie);
+                var mtLogged = (window.__MT_LOGGED_IN || '').toLowerCase();
+                var urlParams = new URLSearchParams(window.location.search || '');
+                var modeParam = (urlParams.get('mode') || '').toLowerCase();
+                var hashVal = (window.location.hash || '').toLowerCase();
+                
+                var hasActiveSession = false;
+
+                // 1. إذا كان المايكروتك أرسل "no" صراحة أو الرابط صريح بطلب تسجيل الدخول
+                if (mtLogged === "no" || modeParam === "login" || hashVal === "#login") {
+                    hasActiveSession = false;
+                    try {
+                        sessionStorage.removeItem("hotspot_active_session");
+                        localStorage.removeItem("hotspot_active_session");
+                        document.cookie = "hotspot_active_session=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                    } catch (e) {}
+                }
+                // 2. إذا كان المايكروتك أرسل "yes" صراحة أو الرابط صريح بطلب صفحة الحالة
+                else if (mtLogged === "yes" || modeParam === "status" || hashVal === "#status") {
+                    hasActiveSession = true;
+                    try {
+                        sessionStorage.setItem("hotspot_active_session", "1");
+                    } catch (e) {}
+                }
+                // 3. الاحتياط في بيئة المحاكاة المحلية (حين لا تُستبدل متغيرات المايكروتك)
+                else {
+                    hasActiveSession = sessionStorage.getItem("hotspot_active_session") === "1" || /(?:^|;\s*)hotspot_active_session=1/.test(document.cookie);
+                }
+
                 if (hasActiveSession) {
                     document.documentElement.classList.add("initial-status-mode");
                     var zeroFlickerStyle = document.createElement('style');
                     zeroFlickerStyle.id = 'zero-flicker-style';
                     zeroFlickerStyle.textContent = 'html.initial-status-mode #login, body.has-active-session #login, #login.hidden-by-status { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; } html.initial-status-mode #status, body.has-active-session #status { display: block !important; visibility: visible !important; opacity: 1 !important; animation: none !important; transform: none !important; }';
                     document.head.appendChild(zeroFlickerStyle);
+                } else {
+                    document.documentElement.classList.remove("initial-status-mode");
+                    var oldZf = document.getElementById('zero-flicker-style');
+                    if (oldZf) oldZf.remove();
                 }
             } catch (err) {}
 
@@ -426,14 +570,34 @@
             overflow: hidden !important;
         }
 
-        /* الشريط السفلي ثابت وظاهر دائماً في شاشة الدخول وشاشة الحالة وكافة النوافذ */
+        /* الشريط السفلي ثابت وظاهر دائماً في أسفل الشاشة لكافة الواجهات دون الحاجة للتمرير */
         #bottomNav,
         .bottom-nav-bar {
+            position: fixed !important;
+            bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) !important;
+            width: calc(100% - 24px) !important;
+            max-width: 440px !important;
+            height: 60px !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
             display: flex !important;
             visibility: visible !important;
             opacity: 1 !important;
             pointer-events: auto !important;
-            z-index: 1000 !important;
+            z-index: 9999 !important;
+            transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, visibility 0.25s ease !important;
+        }
+
+        @media (max-width: 480px) {
+            #bottomNav,
+            .bottom-nav-bar {
+                bottom: calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+                height: 56px !important;
+                width: calc(100% - 18px) !important;
+            }
         }
 
         /* الاستثناء الوحيد الصارم: إخفاء الشريط السفلي في شاشة الحظر فقط */
@@ -449,7 +613,7 @@
             visibility: hidden !important;
             opacity: 0 !important;
             pointer-events: none !important;
-            transform: translateX(50%) translateY(120px) !important;
+            transform: translateX(-50%) translateY(120px) !important;
         }
 
         /* إخفاء ناعم عند فتح لوحة مفاتيح الجوال النصية فقط */
@@ -458,7 +622,7 @@
             opacity: 0 !important;
             visibility: hidden !important;
             pointer-events: none !important;
-            transform: translateX(50%) translateY(120px) !important;
+            transform: translateX(-50%) translateY(120px) !important;
         }
 
         /* الإشعار المنبثق العلوي المخصص الأنيق */
@@ -665,8 +829,13 @@
     </div>
     <script>
         try {
-            if (sessionStorage.getItem("hotspot_active_session") === "1" || /(?:^|;\s*)hotspot_active_session=1/.test(document.cookie)) {
+            var mtLogged = (window.__MT_LOGGED_IN || '').toLowerCase();
+            var urlParams = new URLSearchParams(window.location.search || '');
+            var isStatusMode = mtLogged === "yes" || urlParams.get('mode') === 'status' || (mtLogged !== "no" && (sessionStorage.getItem("hotspot_active_session") === "1" || /(?:^|;\s*)hotspot_active_session=1/.test(document.cookie)));
+            if (isStatusMode) {
                 document.body.classList.add("has-active-session");
+            } else {
+                document.body.classList.remove("has-active-session");
             }
         } catch(e) {}
     </script>

@@ -22,7 +22,7 @@ window.siteConfig = {
     "fixedSpeedCardPrefixes": [
         "777"
     ],
-    "speed-select": 0,
+    "speed-select": 1,
     "speed-var": "speed",
     "speed-option": "",
     "defaultSpeed": "speed_normal",
