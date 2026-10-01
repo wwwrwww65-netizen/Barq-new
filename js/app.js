@@ -283,26 +283,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     async function discoverAdImages() {
-                        const maxCount = Math.max(10, parseInt(cfg.imageCount, 10) || 10);
-                        const checkPromises = [];
-
-                        for (let i = 1; i <= maxCount; i++) {
-                            checkPromises.push(
-                                probeImage(`./adimg/${i}.jpg`).then(async res => {
-                                    if (res) return res;
-                                    return probeImage(`./adimg/${i}.png`, 2000);
-                                })
-                            );
+                        const cfgAd = cfg.adImages || cfg["ad-images"];
+                        if (Array.isArray(cfgAd) && cfgAd.length > 0) return cfgAd;
+                        const count = Math.min(10, parseInt(cfg.imageCount, 10) || 4);
+                        const probes = [];
+                        for (let i = 1; i <= count; i++) {
+                            probes.push(probeImage("./adimg/" + i + ".jpg", 1200));
                         }
-
                         try {
-                            const results = await Promise.all(checkPromises);
+                            const results = await Promise.all(probes);
                             const valid = results.filter(Boolean);
                             if (valid.length > 0) return valid;
                         } catch (e) {}
-
-                        // Fallback: keep existing slides or default to 3.jpg & 4.jpg
-                        return ['./adimg/3.jpg', './adimg/4.jpg'];
+                        const domImgs = Array.from(track.querySelectorAll("img")).map(img => img.getAttribute("src")).filter(Boolean);
+                        return domImgs.length > 0 ? domImgs : ["./adimg/3.jpg", "./adimg/4.jpg"];
                     }
 
                     function buildAndStartCarousel(images) {
