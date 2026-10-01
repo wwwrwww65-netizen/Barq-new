@@ -232,75 +232,114 @@
 ;
 document.addEventListener('DOMContentLoaded', function () {
 
-            // 1. CAROUSEL SEAMLESS INFINITE LOOP & AUTOPLAY
+            // 1. CAROUSEL SEAMLESS INFINITE LOOP, AUTOPLAY & DYNAMIC AUTO-DISCOVERY
             const track = document.getElementById('carouselTrack');
             const dotsContainer = document.getElementById('carouselDots');
             const prevBtn = document.getElementById('carouselPrev');
             const nextBtn = document.getElementById('carouselNext');
             const carouselContainer = document.getElementById('adCarousel');
+            const carouselWrapper = document.querySelector('.ads-carousel-wrapper');
 
-            if (track) {
-                const imgElements = Array.from(track.querySelectorAll('img'));
+            if (track && carouselContainer) {
+                const cfg = window.siteConfig || {};
+                if (cfg.imageV === false) {
+                    if (carouselWrapper) carouselWrapper.style.display = 'none';
+                } else {
+                    function probeImage(src) {
+                        return new Promise(resolve => {
+                            const tempImg = new Image();
+                            let done = false;
+                            const finish = (val) => {
+                                if (done) return;
+                                done = true;
+                                resolve(val);
+                            };
+                            tempImg.onload = () => finish(src);
+                            tempImg.onerror = () => finish(null);
+                            tempImg.src = src;
+                            setTimeout(() => finish(null), 350);
+                        });
+                    }
 
-                // Verify which images actually exist before initializing carousel using a fresh Image object
-                function checkImageValid(src) {
-                    return new Promise(resolve => {
-                        const tempImg = new Image();
-                        tempImg.onload = () => resolve(true);
-                        tempImg.onerror = () => resolve(false);
-                        tempImg.src = src;
-                    });
-                }
+                    async function discoverAdImages() {
+                        const maxCount = Math.max(10, parseInt(cfg.imageCount, 10) || 10);
+                        const checkPromises = [];
 
-                Promise.all(imgElements.map(async img => {
-                    const isValid = await checkImageValid(img.src);
-                    return { img: img, ok: isValid };
-                })).then(results => {
-                    let validSlidesCount = 0;
-                    results.forEach(res => {
-                        if (!res.ok) {
-                            let slide = res.img.closest('.carousel-slide');
-                            if (slide) slide.remove();
-                        } else {
-                            validSlidesCount++;
+                        for (let i = 1; i <= maxCount; i++) {
+                            checkPromises.push(
+                                probeImage(`./adimg/${i}.jpg`).then(async res => {
+                                    if (res) return res;
+                                    return probeImage(`./adimg/${i}.png`);
+                                })
+                            );
                         }
-                    });
 
-                    if (dotsContainer) {
-                        dotsContainer.innerHTML = '';
-                        for (let i = 0; i < validSlidesCount; i++) {
-                            const d = document.createElement('span');
-                            d.className = i === 0 ? 'carousel-dot active' : 'carousel-dot';
-                            dotsContainer.appendChild(d);
+                        const results = await Promise.all(checkPromises);
+                        return results.filter(Boolean);
+                    }
+
+                    function buildAndStartCarousel(images) {
+                        if (!images || images.length === 0) {
+                            if (carouselWrapper) carouselWrapper.style.display = 'none';
+                            return;
                         }
-                    }
 
-                    const originalSlides = Array.from(track.querySelectorAll('.carousel-slide'));
-                    const totalSlides = originalSlides.length;
-                    
-                    if (totalSlides === 0) {
-                        const wrapper = document.querySelector('.ads-carousel-wrapper');
-                        if (wrapper) wrapper.style.display = 'none';
-                        return;
-                    }
+                        if (carouselWrapper) carouselWrapper.style.display = '';
 
-                    const dots = document.querySelectorAll('.carousel-dot');
-                    let currentIndex = 1;
-                    let isTransitioning = false;
-                    let autoplayInterval = null;
-                    let transitionSafetyTimeout = null;
+                        // Clear and build slides
+                        track.innerHTML = '';
+                        images.forEach((src, idx) => {
+                            const slide = document.createElement('div');
+                            slide.className = 'carousel-slide';
+                            const img = document.createElement('img');
+                            img.src = src;
+                            img.alt = 'إعلان ' + (idx + 1);
+                            img.decoding = 'async';
+                            if (idx === 0) {
+                                img.setAttribute('fetchpriority', 'high');
+                            } else {
+                                img.setAttribute('loading', 'lazy');
+                            }
+                            slide.appendChild(img);
+                            track.appendChild(slide);
+                        });
 
-                    if (totalSlides === 1) {
-                        track.style.transition = 'none';
-                        track.style.transform = `translateX(0%)`;
-                        if (dotsContainer) dotsContainer.style.display = 'none';
-                        if (prevBtn) prevBtn.style.display = 'none';
-                        if (nextBtn) nextBtn.style.display = 'none';
-                        return;
-                    }
+                        // Build dots
+                        if (dotsContainer) {
+                            dotsContainer.innerHTML = '';
+                            if (images.length > 1) {
+                                dotsContainer.style.display = 'flex';
+                                images.forEach((_, idx) => {
+                                    const d = document.createElement('span');
+                                    d.className = idx === 0 ? 'carousel-dot active' : 'carousel-dot';
+                                    dotsContainer.appendChild(d);
+                                });
+                            } else {
+                                dotsContainer.style.display = 'none';
+                            }
+                        }
 
-                    if (totalSlides > 1) {
-                        // Clone first and last slides for seamless circular transition
+                        const originalSlides = Array.from(track.querySelectorAll('.carousel-slide'));
+                        const totalSlides = originalSlides.length;
+
+                        if (totalSlides <= 1) {
+                            track.style.transition = 'none';
+                            track.style.transform = 'translateX(0%)';
+                            if (prevBtn) prevBtn.style.display = 'none';
+                            if (nextBtn) nextBtn.style.display = 'none';
+                            return;
+                        }
+
+                        if (prevBtn) prevBtn.style.display = '';
+                        if (nextBtn) nextBtn.style.display = '';
+
+                        const dots = Array.from(dotsContainer ? dotsContainer.querySelectorAll('.carousel-dot') : []);
+                        let currentIndex = 1;
+                        let isTransitioning = false;
+                        let autoplayInterval = null;
+                        let transitionSafetyTimeout = null;
+
+                        // Clones for infinite circular wrap
                         const firstClone = originalSlides[0].cloneNode(true);
                         const lastClone = originalSlides[totalSlides - 1].cloneNode(true);
                         firstClone.classList.add('carousel-clone');
@@ -309,121 +348,115 @@ document.addEventListener('DOMContentLoaded', function () {
                         track.insertBefore(lastClone, track.firstElementChild);
                         track.appendChild(firstClone);
 
-                        // Initialize starting position at first real slide
                         track.style.transition = 'none';
                         track.style.transform = `translateX(-${currentIndex * 100}%)`;
-                        track.offsetHeight; // Force reflow
+                        track.offsetHeight;
                         track.style.transition = 'transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)';
-                    }
 
-                    function updateDots() {
-                    const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-                    dots.forEach((dot, idx) => {
-                        dot.classList.toggle('active', idx === realIndex);
-                    });
-                }
+                        function updateDots() {
+                            const realIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                            dots.forEach((dot, idx) => {
+                                dot.classList.toggle('active', idx === realIndex);
+                            });
+                        }
 
-                function goToSlide(index, animated = true) {
-                    currentIndex = index;
-                    if (animated) {
-                        track.style.transition = 'transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)';
-                    } else {
-                        track.style.transition = 'none';
-                    }
-                    track.style.transform = `translateX(-${currentIndex * 100}%)`;
-                    updateDots();
-
-                    clearTimeout(transitionSafetyTimeout);
-                    if (animated) {
-                        isTransitioning = true;
-                        transitionSafetyTimeout = setTimeout(() => {
-                            checkCloneReset();
+                        function checkCloneReset() {
+                            if (currentIndex === totalSlides + 1) {
+                                track.style.transition = 'none';
+                                currentIndex = 1;
+                                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                                track.offsetHeight;
+                            } else if (currentIndex === 0) {
+                                track.style.transition = 'none';
+                                currentIndex = totalSlides;
+                                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                                track.offsetHeight;
+                            }
                             isTransitioning = false;
-                        }, 500);
-                    }
-                }
+                        }
 
-                function checkCloneReset() {
-                    if (currentIndex === totalSlides + 1) {
-                        // We moved forward past the last slide into clone 1 -> silently reset to real slide 1
-                        track.style.transition = 'none';
-                        currentIndex = 1;
-                        track.style.transform = `translateX(-${currentIndex * 100}%)`;
-                        track.offsetHeight; // Force reflow
-                    } else if (currentIndex === 0) {
-                        // We moved backward past first slide into clone last -> silently reset to real last slide
-                        track.style.transition = 'none';
-                        currentIndex = totalSlides;
-                        track.style.transform = `translateX(-${currentIndex * 100}%)`;
-                        track.offsetHeight; // Force reflow
-                    }
-                    isTransitioning = false;
-                }
+                        track.addEventListener('transitionend', (e) => {
+                            if (e.target === track && e.propertyName === 'transform') {
+                                checkCloneReset();
+                            }
+                        });
 
-                track.addEventListener('transitionend', (e) => {
-                    if (e.target === track && e.propertyName === 'transform') {
-                        checkCloneReset();
-                    }
-                });
-
-                function nextSlide() {
-                    if (isTransitioning) return;
-                    goToSlide(currentIndex + 1);
-                }
-
-                function prevSlide() {
-                    if (isTransitioning) return;
-                    goToSlide(currentIndex - 1);
-                }
-
-                function startAutoplay() {
-                    stopAutoplay();
-                    autoplayInterval = setInterval(() => {
-                        nextSlide();
-                    }, 4000);
-                }
-
-                function stopAutoplay() {
-                    if (autoplayInterval) clearInterval(autoplayInterval);
-                }
-
-                if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); startAutoplay(); });
-                if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); startAutoplay(); });
-
-                dots.forEach((dot, idx) => {
-                    dot.addEventListener('click', () => {
-                        if (isTransitioning) return;
-                        goToSlide(idx + 1);
-                        startAutoplay();
-                    });
-                });
-
-                // Touch Swipe Gestures for Mobile
-                let touchStartX = 0;
-                let touchEndX = 0;
-
-                if (carouselContainer) {
-                    carouselContainer.addEventListener('touchstart', (e) => {
-                        touchStartX = e.changedTouches[0].screenX;
-                        stopAutoplay();
-                    }, { passive: true });
-
-                    carouselContainer.addEventListener('touchend', (e) => {
-                        touchEndX = e.changedTouches[0].screenX;
-                        const diff = touchEndX - touchStartX;
-                        if (Math.abs(diff) > 40) {
-                            if (diff > 0) {
-                                prevSlide(); // Swipe right
+                        function goToSlide(index, animated = true) {
+                            currentIndex = index;
+                            if (animated) {
+                                track.style.transition = 'transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)';
                             } else {
-                                nextSlide(); // Swipe left
+                                track.style.transition = 'none';
+                            }
+                            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                            updateDots();
+
+                            clearTimeout(transitionSafetyTimeout);
+                            if (animated) {
+                                isTransitioning = true;
+                                transitionSafetyTimeout = setTimeout(() => {
+                                    checkCloneReset();
+                                    isTransitioning = false;
+                                }, 500);
                             }
                         }
-                        startAutoplay();
-                    }, { passive: true });
-                }
 
-                startAutoplay();
-                });
+                        function nextSlide() {
+                            if (isTransitioning) return;
+                            goToSlide(currentIndex + 1);
+                        }
+
+                        function prevSlide() {
+                            if (isTransitioning) return;
+                            goToSlide(currentIndex - 1);
+                        }
+
+                        function startAutoplay() {
+                            stopAutoplay();
+                            autoplayInterval = setInterval(nextSlide, 4000);
+                        }
+
+                        function stopAutoplay() {
+                            if (autoplayInterval) {
+                                clearInterval(autoplayInterval);
+                                autoplayInterval = null;
+                            }
+                        }
+
+                        if (prevBtn) prevBtn.onclick = () => { prevSlide(); startAutoplay(); };
+                        if (nextBtn) nextBtn.onclick = () => { nextSlide(); startAutoplay(); };
+
+                        dots.forEach((dot, idx) => {
+                            dot.onclick = () => {
+                                if (isTransitioning) return;
+                                goToSlide(idx + 1);
+                                startAutoplay();
+                            };
+                        });
+
+                        let touchStartX = 0;
+                        carouselContainer.ontouchstart = (e) => {
+                            touchStartX = e.changedTouches[0].screenX;
+                            stopAutoplay();
+                        };
+                        carouselContainer.ontouchend = (e) => {
+                            const touchEndX = e.changedTouches[0].screenX;
+                            const diff = touchEndX - touchStartX;
+                            if (Math.abs(diff) > 40) {
+                                if (diff > 0) prevSlide();
+                                else nextSlide();
+                            }
+                            startAutoplay();
+                        };
+
+                        startAutoplay();
+                    }
+
+                    // Run automatic discovery on start
+                    discoverAdImages().then(validImgs => {
+                        buildAndStartCarousel(validImgs);
+                    });
+                }
             }
 
             // 2. UNIVERSAL MODAL CONTROLLER & POPUP SCROLL LOCK MANAGER
@@ -994,8 +1027,23 @@ document.addEventListener('DOMContentLoaded', function () {
             // 4. UPDATES BLOCKER TOGGLE STATUS TEXT (LOGIN SCREEN)
             const chUpdate = document.getElementById('chupdate');
             const updateStatusText = document.getElementById('updateStatusText');
+            const updateNotice = document.getElementById('updateNotice');
+            const updateNoticeClose = document.getElementById('updateNoticeClose');
+            const updateNoticeOk = document.getElementById('updateNoticeOk');
+
+            const closeUpdateNotice = () => {
+                if (updateNotice) updateNotice.classList.remove('on');
+            };
+            if (updateNoticeClose) updateNoticeClose.addEventListener('click', closeUpdateNotice);
+            if (updateNoticeOk) updateNoticeOk.addEventListener('click', closeUpdateNotice);
+            if (updateNotice) {
+                updateNotice.addEventListener('click', (e) => {
+                    if (e.target === updateNotice) closeUpdateNotice();
+                });
+            }
+
             if (chUpdate && updateStatusText) {
-                const updateToggleState = () => {
+                const updateToggleState = (userTriggered) => {
                     const cfg = window.siteConfig || {};
                     const isFeatureEnabled = cfg.updatesBlockerV === true || (cfg.updatesBlockerV !== false && cfg["enable-updates-blocker"] !== 0 && cfg["enable-updates-blocker"] !== false);
                     if (!isFeatureEnabled) {
@@ -1009,6 +1057,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (isChecked) {
                         updateStatusText.textContent = 'مفعل';
                         updateStatusText.classList.add('active');
+                        if (userTriggered && updateNotice) {
+                            updateNotice.classList.add('on');
+                        }
                     } else {
                         updateStatusText.textContent = 'متوقف';
                         updateStatusText.classList.remove('active');
@@ -1028,8 +1079,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         else statusLbl.classList.remove('active');
                     }
                 };
-                chUpdate.addEventListener('change', updateToggleState);
-                updateToggleState();
+                chUpdate.addEventListener('change', () => updateToggleState(true));
+                updateToggleState(false);
             }
 
             // 5. STATUS SCREEN: SPEED MODAL HANDLER (LIVE CONNECTION SPEED CHANGE)
@@ -1296,6 +1347,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     } else {
                         statusUpdateStatusText.classList.remove('active');
                     }
+                }
+                if (typeof window.applyStatusScreenFixedSpeedLock === 'function') {
+                    window.applyStatusScreenFixedSpeedLock();
                 }
             };
 
@@ -1693,11 +1747,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // =========================================================================
-            // 5. SPEED SELECTOR - PERMANENT VISIBILITY FOR ALL CARDS
-            // (إلغاء حظر الكروت 2 و 3 وظهور أزرار السرعات دائماً لجميع الكروت)
+            // 5. SPEED SELECTOR - FIXED SPEED LOGIC FOR 777 AND SPECIAL CARDS
+            // (تعتيم أزرار السرعة ومنع النقر/التحريك لكروت 777 وإخفاء خيار السرعة في شاشة الحالة)
             // =========================================================================
             window.checkCardHasFixedSpeed = function (cardNumber) {
-                // Disabled: All cards can select speeds freely without restrictions
+                if (!cardNumber) return false;
+                const str = String(cardNumber).trim();
+                if (!str) return false;
+                if (str.startsWith('777')) return true;
+                const cfg = window.siteConfig || {};
+                const prefixes = Array.isArray(cfg.fixedSpeedCardPrefixes) ? cfg.fixedSpeedCardPrefixes : ['777'];
+                for (let i = 0; i < prefixes.length; i++) {
+                    const p = String(prefixes[i]).trim();
+                    if (p && str.startsWith(p)) return true;
+                }
                 return false;
             };
 
@@ -1705,50 +1768,121 @@ document.addEventListener('DOMContentLoaded', function () {
                 const popdownContainer = document.getElementById('speedSelectionPopdown');
                 const speedCard = document.querySelector('.speed-selection-card');
                 const speedOuterHeader = document.querySelector('.speed-selection-outer-header');
+                const speedPillsRow = document.getElementById('speedPillsRow');
                 const speedSel = document.getElementById('speed');
                 const speedDisp = document.getElementById('selectedSpeedDisplay');
                 const pills = document.querySelectorAll('#speedPillsRow .speed-pill-btn');
 
-                // أزرار السرعات ظاهرة ومتاحة دائماً لكافة الكروت
+                // حاوية السرعات في شاشة تسجيل الدخول تكون ظاهرة دائماً
                 if (popdownContainer) {
+                    popdownContainer.style.setProperty('display', 'block', 'important');
+                    popdownContainer.style.setProperty('visibility', 'visible', 'important');
                     popdownContainer.classList.add('speed-popdown-visible');
-                    popdownContainer.style.removeProperty('display');
+                    popdownContainer.classList.remove('speed-locked-fixed');
                 }
                 if (speedCard) speedCard.classList.remove('speed-locked-fixed');
                 if (speedOuterHeader) speedOuterHeader.classList.remove('speed-locked-fixed');
-                if (speedDisp) speedDisp.classList.remove('speed-locked-badge');
 
-                const activePill = document.querySelector('#speedPillsRow .speed-pill-btn.active');
-                if (!activePill && pills.length > 0) {
-                    const speeds = (window.siteConfig && window.siteConfig.speedOptions) || [];
-                    const def = speeds.find(s => s.selected || s.isDefault) || speeds[0];
-                    if (def) {
-                        const matchPill = document.querySelector(`#speedPillsRow .speed-pill-btn[data-speed="${def.value}"]`) || pills[0];
-                        if (matchPill) matchPill.classList.add('active');
-                        if (speedSel) speedSel.value = def.value;
-                        if (speedDisp) speedDisp.textContent = def.label || def.name;
+                const isFixed = window.checkCardHasFixedSpeed(cardNumber);
+
+                if (isFixed) {
+                    // تصبح أزرار السرعة معتمة تماماً ومقفلة عن النقر أو التحريك
+                    if (speedPillsRow) speedPillsRow.classList.add('speed-locked-fixed');
+                    // تنطفئ الشارة تماماً ولا تعرض أي نص
+                    if (speedDisp) {
+                        speedDisp.classList.add('speed-badge-dimmed-off');
+                        speedDisp.style.setProperty('display', 'none', 'important');
+                        speedDisp.innerHTML = '';
                     }
-                } else if (activePill) {
-                    const val = activePill.getAttribute('data-speed');
-                    const title = activePill.getAttribute('data-speed-title');
-                    if (speedSel) speedSel.value = val;
-                    if (speedDisp) speedDisp.textContent = title;
+                    if (speedSel) speedSel.value = '';
+                } else {
+                    // إرجاع أزرار السرعة والشارة إلى حالتها الطبيعية المضيئة والتفاعلية للكروت العادية
+                    if (speedPillsRow) speedPillsRow.classList.remove('speed-locked-fixed');
+                    if (speedDisp) {
+                        speedDisp.classList.remove('speed-badge-dimmed-off');
+                        speedDisp.style.removeProperty('display');
+                    }
+
+                    const activePill = document.querySelector('#speedPillsRow .speed-pill-btn.active');
+                    if (!activePill && pills.length > 0) {
+                        const speeds = (window.siteConfig && window.siteConfig.speedOptions) || [];
+                        const def = speeds.find(s => s.selected || s.isDefault) || speeds[0];
+                        if (def) {
+                            const matchPill = document.querySelector(`#speedPillsRow .speed-pill-btn[data-speed="${def.value}"]`) || pills[0];
+                            if (matchPill) matchPill.classList.add('active');
+                            if (speedSel) speedSel.value = def.value;
+                            if (speedDisp) {
+                                speedDisp.innerHTML = '<svg viewBox="0 0 24 24" class="thunder-mini-spark" aria-hidden="true"><path d="M11 2L5 13h5l-1 7 8-9h-5l1-7z"/></svg><span>' + (def.label || def.name) + '</span>';
+                            }
+                        }
+                    } else if (activePill) {
+                        const val = activePill.getAttribute('data-speed');
+                        const title = activePill.getAttribute('data-speed-title');
+                        if (speedSel) speedSel.value = val;
+                        if (speedDisp) {
+                            speedDisp.innerHTML = '<svg viewBox="0 0 24 24" class="thunder-mini-spark" aria-hidden="true"><path d="M11 2L5 13h5l-1 7 8-9h-5l1-7z"/></svg><span>' + (title || 'سرعة افتراضية') + '</span>';
+                        }
+                    }
                 }
             };
 
             window.applyStatusScreenFixedSpeedLock = function (userStr) {
-                // إتاحة خيارات تغيير السرعة في شاشة الحالة دائماً لكافة الكروت
                 var statusSpeedContainer = document.getElementById('statusSpeedChangeContainer') || document.querySelector('#status .statusdiv');
                 var statusTrigger = document.getElementById('statusSpeedTrigger');
 
-                if (statusSpeedContainer) {
-                    statusSpeedContainer.style.removeProperty('display');
-                    statusSpeedContainer.classList.remove('speed-locked-fixed');
+                var currentCard = (userStr || '').trim();
+                if (!currentCard) {
+                    try {
+                        currentCard = localStorage.getItem('last_user_card') ||
+                                      localStorage.getItem('hotspot_username') ||
+                                      localStorage.getItem('hot_last_username') || '';
+                    } catch(e) {}
+                }
+                if (!currentCard) {
+                    try {
+                        var m = document.cookie.match(/(?:^|;\s*)username=([^;]+)/);
+                        if (m && m[1]) currentCard = decodeURIComponent(m[1]).trim();
+                    } catch(e) {}
+                }
+                if (!currentCard) {
+                    var uEl = document.querySelector('input[username-field], input[name="username"]');
+                    if (uEl && uEl.value) currentCard = uEl.value.trim();
+                }
+                if (!currentCard) {
+                    var statusUserSpan = document.getElementById('username') || document.getElementById('user') || document.querySelector('#status [data-username]');
+                    if (statusUserSpan && statusUserSpan.textContent) currentCard = statusUserSpan.textContent.trim();
                 }
 
-                if (statusTrigger) {
-                    statusTrigger.classList.remove('status-speed-locked');
-                    statusTrigger.removeAttribute('title');
+                var isFixed = window.checkCardHasFixedSpeed(currentCard);
+
+                if (isFixed) {
+                    try {
+                        document.documentElement.classList.add('is-fixed-speed-user');
+                        document.body.classList.add('is-fixed-speed-user');
+                    } catch(e) {}
+                    if (statusSpeedContainer) {
+                        statusSpeedContainer.style.setProperty('display', 'none', 'important');
+                        statusSpeedContainer.classList.add('speed-hidden-for-fixed');
+                    }
+                    if (statusTrigger) {
+                        statusTrigger.style.setProperty('display', 'none', 'important');
+                        statusTrigger.setAttribute('disabled', 'disabled');
+                        statusTrigger.style.pointerEvents = 'none';
+                    }
+                } else {
+                    try {
+                        document.documentElement.classList.remove('is-fixed-speed-user');
+                        document.body.classList.remove('is-fixed-speed-user');
+                    } catch(e) {}
+                    if (statusSpeedContainer) {
+                        statusSpeedContainer.style.removeProperty('display');
+                        statusSpeedContainer.classList.remove('speed-hidden-for-fixed');
+                    }
+                    if (statusTrigger) {
+                        statusTrigger.style.removeProperty('display');
+                        statusTrigger.removeAttribute('disabled');
+                        statusTrigger.style.pointerEvents = 'auto';
+                    }
                 }
             };
 

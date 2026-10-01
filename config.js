@@ -63,7 +63,7 @@ window.siteConfig = {
             "isDefault": false
         }
     ],
-    "imageCount": "7",
+    "imageCount": "10",
     "imageV": true,
     "packages": [
         {

@@ -15,17 +15,53 @@
     <meta name="HandheldFriendly" content="true">
     <meta name="MobileOptimized" content="width">
     <meta name="theme-color" content="#070B14">
+    <meta name="color-scheme" content="dark">
+    <meta name="supported-color-schemes" content="dark">
+    <script>
+        (function() {
+            try {
+                var u = '';
+                try {
+                    u = localStorage.getItem('last_user_card') || localStorage.getItem('hotspot_username') || localStorage.getItem('hot_last_username') || '';
+                } catch(e) {}
+                if (!u) {
+                    var m = document.cookie.match(/(?:^|;\s*)username=([^;]+)/);
+                    if (m && m[1]) u = decodeURIComponent(m[1]);
+                }
+                if (u && String(u).trim().indexOf('777') === 0) {
+                    document.documentElement.classList.add('is-fixed-speed-user');
+                }
+            } catch(e) {}
+        })();
+    </script>
     <style id="critical-theme-style">
-        html, body {
+        :root, html, body {
+            color-scheme: dark !important;
+            -webkit-color-scheme: dark !important;
             background-color: #030712 !important;
             background-image: radial-gradient(ellipse at 50% 8%, rgba(0, 240, 255, 0.14) 0%, transparent 55%),
                               radial-gradient(ellipse at 85% 25%, rgba(0, 114, 255, 0.1) 0%, transparent 45%),
                               radial-gradient(ellipse at 15% 45%, rgba(255, 230, 0, 0.05) 0%, transparent 40%),
                               radial-gradient(ellipse at 50% 90%, rgba(4, 10, 24, 0.95) 0%, transparent 70%) !important;
-            color: #ffffff;
+            color: #ffffff !important;
             margin: 0;
             padding: 0;
             min-height: 100%;
+        }
+
+        input, select, textarea, button {
+            color-scheme: dark !important;
+            -webkit-color-scheme: dark !important;
+        }
+
+        /* Immunity against browser forced Light / Day mode overrides */
+        @media (prefers-color-scheme: light) {
+            :root, html, body {
+                color-scheme: dark !important;
+                -webkit-color-scheme: dark !important;
+                background-color: #030712 !important;
+                color: #ffffff !important;
+            }
         }
     </style>
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
@@ -149,22 +185,7 @@
             content: "سرعة في النت";
         }
 
-        /* Anti-Copy & Anti-Inspection Shield */
-        body,
-        .container,
-        .screen,
-        .login,
-        .app,
-        .floating-icons,
-        .screen-background {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-        }
-
-        /* Ensure all inputs and editable fields remain fully accessible and easy to type into */
+        /* Native fluid typography and user accessibility */
         input,
         textarea,
         [contenteditable="true"],
@@ -204,21 +225,65 @@
             display: block;
         }
 
-        /* Fixed Speed Cards Lock Styling - Disabled: Speeds are permanently active for all cards */
-        .speed-locked-fixed {
-            opacity: 1 !important;
-            pointer-events: auto !important;
-            filter: none !important;
+        /* Fixed Speed Cards Lock Styling (كروت البادئة 777 والكروت الخاصة) */
+        .speed-selection-popdown-container {
+            display: block !important;
+            visibility: visible !important;
         }
-        .speed-locked-badge {
-            background: rgba(0, 240, 255, 0.15) !important;
-            color: #00F0FF !important;
-            border: 1px solid rgba(0, 240, 255, 0.35) !important;
+
+        /* تعتيم أزرار السرعة ومنع النقر أو التحريك مع بقائها ظاهرة وواضحة */
+        .speed-pills-row.speed-locked-fixed {
+            opacity: 0.52 !important;
+            filter: grayscale(0.7) brightness(0.85) !important;
+            pointer-events: none !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: not-allowed !important;
+            touch-action: none !important;
+            overflow-x: hidden !important;
+            transition: opacity 0.3s ease, filter 0.3s ease !important;
         }
-        .status-speed-locked {
-            pointer-events: auto !important;
-            opacity: 1 !important;
-            cursor: pointer !important;
+
+        .speed-pills-row.speed-locked-fixed .speed-pill-btn {
+            pointer-events: none !important;
+            cursor: not-allowed !important;
+            opacity: 0.82 !important;
+            background: #0f172a !important;
+            border-color: rgba(148, 163, 184, 0.3) !important;
+            color: #94a3b8 !important;
+            box-shadow: none !important;
+            touch-action: none !important;
+        }
+
+        .speed-pills-row.speed-locked-fixed .speed-pill-btn.active {
+            background: rgba(148, 163, 184, 0.18) !important;
+            border-color: rgba(245, 158, 11, 0.45) !important;
+            color: #f1f5f9 !important;
+            box-shadow: none !important;
+        }
+
+        .speed-pills-row.speed-locked-fixed .pill-dot {
+            background: #f59e0b !important;
+            box-shadow: 0 0 6px #f59e0b !important;
+        }
+
+        .selected-speed-badge.speed-badge-dimmed-off {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        html.is-fixed-speed-user #statusSpeedChangeContainer,
+        body.is-fixed-speed-user #statusSpeedChangeContainer,
+        #statusSpeedChangeContainer.speed-hidden-for-fixed {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
         }
 
         /* الإشعار المنبثق العلوي المخصص الأنيق */
@@ -268,11 +333,151 @@
             border-color: rgba(16, 185, 129, 0.6);
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(16, 185, 129, 0.25);
         }
+
+        /* ── Input Wrapper Visual Clarity & Lighter Contrast ── */
+        .login-input-card .input-wrapper-glass,
+        .input-wrapper-glass {
+            background: linear-gradient(135deg, rgba(26, 42, 74, 0.95), rgba(18, 30, 54, 0.95)) !important;
+            border: 1.5px solid rgba(0, 240, 255, 0.5) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.16) !important;
+            transition: all 0.25s ease !important;
+        }
+
+        .login-input-card .input-wrapper-glass:focus-within,
+        .input-wrapper-glass:focus-within {
+            background: linear-gradient(135deg, rgba(34, 54, 96, 0.98), rgba(24, 40, 70, 0.98)) !important;
+            border-color: #00F0FF !important;
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.32), 0 0 24px rgba(0, 240, 255, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.22) !important;
+        }
+
+        .login-input-card .input-wrapper-glass .login-input,
+        .input-wrapper-glass .login-input {
+            color: #FFFFFF !important;
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
+            background: transparent !important;
+            letter-spacing: 0.5px;
+        }
+
+        .login-input-card .input-wrapper-glass .login-input::placeholder,
+        .input-wrapper-glass .login-input::placeholder {
+            color: rgba(168, 188, 218, 0.85) !important;
+            font-weight: 500 !important;
+        }
+
+        .login-input-card .input-icon-badge,
+        .input-wrapper-glass .input-icon-badge {
+            background: rgba(0, 240, 255, 0.18) !important;
+            border: 1px solid rgba(0, 240, 255, 0.4) !important;
+            border-radius: 10px !important;
+        }
+
+        .login-input-card .input-icon-badge svg,
+        .input-wrapper-glass .input-icon-badge svg {
+            fill: #00F0FF !important;
+        }
+
+        .login-input-card .prev-card-pill-btn {
+            background: rgba(0, 240, 255, 0.15) !important;
+            border: 1px solid rgba(0, 240, 255, 0.4) !important;
+            color: #00F0FF !important;
+            font-weight: 700 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .login-input-card .prev-card-pill-btn:hover,
+        .login-input-card .prev-card-pill-btn:active {
+            background: rgba(0, 240, 255, 0.28) !important;
+            border-color: #00F0FF !important;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.35) !important;
+        }
+
+        /* ── Update Notice Modal Overlay ── */
+        .update-notice-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            padding: 16px;
+        }
+        .update-notice-overlay.on {
+            display: flex;
+        }
+        .update-notice-box {
+            background: linear-gradient(135deg, rgba(14, 23, 42, 0.98), rgba(8, 13, 24, 0.99));
+            border: 1.5px solid rgba(0, 240, 255, 0.5);
+            border-radius: 18px;
+            padding: 24px 20px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 240, 255, 0.3);
+            position: relative;
+            color: #FFFFFF;
+        }
+        .update-notice-close {
+            position: absolute;
+            top: 10px; left: 14px;
+            background: none; border: none;
+            color: #94A3B8; font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .update-notice-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+        .update-notice-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #00F0FF;
+            margin-bottom: 8px;
+        }
+        .update-notice-text {
+            font-size: 0.88rem;
+            color: #E2E8F0;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        .update-notice-ok {
+            background: linear-gradient(135deg, #00F0FF, #0284c7);
+            color: #030712;
+            border: none;
+            padding: 8px 28px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
     </style>
-    <script src="js/security.min.js"></script>
 </head>
 
 <body translate="no">
+    <!-- Legacy compatibility elements for hotspot scripts -->
+    <div class="popup-overlay" id="popupError" onclick="closePopup(event)" style="display:none">
+        <div class="popup-box">
+            <button type="button" data-close aria-label="إغلاق">✕</button>
+            <p id="popupMessage"></p>
+            <div id="err"></div>
+        </div>
+    </div>
+
+    <!-- Update Notice Popup (Section 9 in hotspot README) -->
+    <div class="update-notice-overlay" id="updateNotice" role="alertdialog" aria-modal="true" aria-labelledby="updateNoticeTitle" aria-describedby="updateNoticeText">
+        <div class="update-notice-box">
+            <button type="button" class="update-notice-close" id="updateNoticeClose" aria-label="إغلاق">×</button>
+            <div class="update-notice-icon" aria-hidden="true">🛡️</div>
+            <h3 class="update-notice-title" id="updateNoticeTitle">تم تفعيل إيقاف التحديثات</h3>
+            <p class="update-notice-text" id="updateNoticeText">تم إيقاف التحديثات التلقائية للهاتف، وتعطيل متجر جوجل بلاي أثناء استخدام الشبكة.</p>
+            <button type="button" class="update-notice-ok" id="updateNoticeOk">حسنًا</button>
+        </div>
+    </div>
     <script>
         try {
             if (localStorage.getItem("hotspot_active_session") === "1" || /(?:^|;\s*)hotspot_active_session=1/.test(document.cookie)) {
@@ -620,26 +825,10 @@
                         <div class="carousel-container" id="adCarousel">
                             <div class="carousel-track" id="carouselTrack">
                                 <div class="carousel-slide">
-                                    <img class="im1" src="./adimg/1.jpg" alt="إعلان 1" fetchpriority="high"
-                                        decoding="async">
+                                    <img class="im3" src="./adimg/3.jpg" alt="إعلان 1" fetchpriority="high" decoding="async">
                                 </div>
                                 <div class="carousel-slide">
-                                    <img class="im2" src="./adimg/2.jpg" alt="إعلان 2" loading="lazy" decoding="async">
-                                </div>
-                                <div class="carousel-slide">
-                                    <img class="im3" src="./adimg/3.jpg" alt="إعلان 3" loading="lazy" decoding="async">
-                                </div>
-                                <div class="carousel-slide">
-                                    <img class="im4" src="./adimg/4.jpg" alt="إعلان 4" loading="lazy" decoding="async">
-                                </div>
-                                <div class="carousel-slide">
-                                    <img class="im5" src="./adimg/5.jpg" alt="إعلان 5" loading="lazy" decoding="async">
-                                </div>
-                                <div class="carousel-slide">
-                                    <img class="im6" src="./adimg/6.jpg" alt="إعلان 6" loading="lazy" decoding="async">
-                                </div>
-                                <div class="carousel-slide">
-                                    <img class="im7" src="./adimg/7.jpg" alt="إعلان 7" loading="lazy" decoding="async">
+                                    <img class="im4" src="./adimg/4.jpg" alt="إعلان 2" loading="lazy" decoding="async">
                                 </div>
                             </div>
                             <button class="carousel-nav-btn prev" id="carouselPrev" aria-label="السابق">❮</button>
@@ -647,11 +836,6 @@
                         </div>
                         <div class="carousel-dots" id="carouselDots">
                             <span class="carousel-dot active"></span>
-                            <span class="carousel-dot"></span>
-                            <span class="carousel-dot"></span>
-                            <span class="carousel-dot"></span>
-                            <span class="carousel-dot"></span>
-                            <span class="carousel-dot"></span>
                             <span class="carousel-dot"></span>
                         </div>
 
@@ -737,7 +921,7 @@
                                     </svg>
                                 </span>
                                 <input name="username" class="login-input" placeholder="ادخل رقم الكرت هنا"
-                                    username-field improve-input autocomplete="off" enterkeyhint="go"
+                                    username-field improve-input rm-white-spaces to-arabic-numbers autocomplete="off" enterkeyhint="go"
                                     inputmode="text">
 
                                 <!-- Embedded Micro-Actions (Previous Card Direct Fill Button) -->
@@ -1543,11 +1727,11 @@
     <script src="js/hotInImprover.min.js"></script>
     <script src="js/hotCookie.min.js"></script>
     <script src="js/hotOptions.min.js"></script>
-    <script src="js/hotBlocker.min.js"></script>
-    <script src="js/main.min.js"></script>
+    <script src="js/hotBlocker.min.js" block-time="1" enable-hot-blocker try-count="10"></script>
+    <script src="js/main.min.js" link-login-only="$(link-login-only)"></script>
 
     <!-- 2026 High-Performance Application Bundle -->
-    <script src="js/app.min.js"></script>
+    <script src="js/app.js"></script>
     <script src="js/notifications-system/notifications-integration.js"></script>
 </body>
 
