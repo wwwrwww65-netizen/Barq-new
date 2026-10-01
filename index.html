@@ -754,12 +754,14 @@
             display: block;
         }
 
-        /* تقليل التباعد من أعلى الشاشة ورأس الصفحة للنصف */
+        /* تقليل التباعد من أعلى الشاشة ورأس الصفحة للنصف والجانبين */
         body {
             padding-top: max(2px, env(safe-area-inset-top, 0px)) !important;
         }
         .container {
             padding-top: 5px !important;
+            padding-left: 8px !important;
+            padding-right: 8px !important;
             margin-top: 0 !important;
         }
         .screen,
