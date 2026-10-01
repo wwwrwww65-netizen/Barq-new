@@ -64,6 +64,7 @@
             overflow-y: auto;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            padding-top: calc(6px + env(safe-area-inset-top, 0px)) !important;
         }
 
         /* Responsive, elegant mobile card container - Prevents stretching edge-to-edge across phone */
@@ -72,10 +73,10 @@
             z-index: 1 !important;
             width: 94% !important;
             max-width: 420px !important;
-            margin: 0 auto !important;
+            margin: 4px auto 0 !important;
             min-height: auto !important;
             box-sizing: border-box !important;
-            padding: 12px 6px calc(85px + env(safe-area-inset-bottom, 0px)) 6px !important;
+            padding: 8px 6px calc(115px + env(safe-area-inset-bottom, 0px)) 6px !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: stretch !important;
@@ -85,54 +86,173 @@
             .container {
                 width: 93% !important;
                 max-width: 410px !important;
-                margin: 0 auto !important;
-                padding: 10px 4px calc(80px + env(safe-area-inset-bottom, 0px)) 4px !important;
+                margin: 4px auto 0 !important;
+                padding: 6px 4px calc(110px + env(safe-area-inset-bottom, 0px)) 4px !important;
             }
         }
 
-        /* Performance Optimization: Disable CPU/GPU-heavy continuous filter animations for ultra-fast response */
-        .thunder-arc-bolt,
-        .card-thunder-corner,
-        .btn-thunder-spark,
-        .status-thunder-arc,
-        .gauge-thunder-arc,
-        .pod-thunder-bolt,
-        .aloula-feat-lightning .thunder-pulse-icon,
-        .thunder-icon-wrap .thunder-bolt-svg,
-        .thunder-badge .thunder-mini-spark,
-        .status-live-thunder-spark,
-        .status-title-thunder,
-        .thunder-session-dot,
+        .aloula-hero-card,
+        .status-header-card,
+        .compact-speed-card,
+        .modal-sheet-card {
+            margin-top: 4px !important;
+        }
+
+        /* ========================================================================= */
+        /* Dynamic Live Animations for Network Header in Login Card (aloula-hero-card) */
+        /* ========================================================================= */
+        .aloula-hero-card {
+            overflow: hidden !important;
+            position: relative !important;
+        }
+
+        .aloula-hero-card::after {
+            content: "" !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            height: 2.5px !important;
+            background: linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.9) 30%, #FFE600 50%, rgba(0, 240, 255, 0.9) 70%, transparent 100%) !important;
+            animation: lightningBorderSweep 3.5s infinite linear !important;
+            opacity: 1 !important;
+            pointer-events: none !important;
+            z-index: 5 !important;
+        }
+
+        .aloula-wave-1 {
+            animation: heroWaveAnim1 7s infinite ease-in-out alternate !important;
+            transform-origin: bottom center !important;
+        }
+        .aloula-wave-2 {
+            animation: heroWaveAnim2 9s infinite ease-in-out alternate !important;
+            transform-origin: bottom center !important;
+        }
+        .aloula-wave-3 {
+            animation: heroWaveAnim1 11s infinite ease-in-out alternate-reverse !important;
+            transform-origin: bottom center !important;
+        }
+
+        @keyframes heroWaveAnim1 {
+            0% { transform: translateY(0) scaleY(1); opacity: 0.7; }
+            50% { transform: translateY(-5px) scaleY(1.08); opacity: 0.95; }
+            100% { transform: translateY(3px) scaleY(0.96); opacity: 0.8; }
+        }
+
+        @keyframes heroWaveAnim2 {
+            0% { transform: translateY(0); opacity: 0.4; }
+            50% { transform: translateY(5px); opacity: 0.75; }
+            100% { transform: translateY(-3px); opacity: 0.5; }
+        }
+
+        /* Halo Orb live rotating dashed energy ring */
+        .halo-ring-outer {
+            position: absolute !important;
+            inset: -5px !important;
+            border-radius: 50% !important;
+            border: 2px dashed rgba(0, 240, 255, 0.75) !important;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.3) !important;
+            animation: haloRotate 6s linear infinite !important;
+        }
+
+        .halo-ring-inner {
+            position: absolute !important;
+            inset: 1px !important;
+            border-radius: 50% !important;
+            border: 1.5px solid rgba(0, 240, 255, 0.75) !important;
+            background: radial-gradient(circle, #08162e, #030814) !important;
+            box-shadow: 0 0 22px rgba(0, 240, 255, 0.5), inset 0 0 18px rgba(0, 240, 255, 0.35) !important;
+        }
+
+        /* Dancing sparks around the orb */
+        .halo-spark {
+            position: absolute !important;
+            width: 5px !important;
+            height: 5px !important;
+            border-radius: 50% !important;
+            background: #FFE600 !important;
+            box-shadow: 0 0 12px 3px #00F0FF, 0 0 6px #FFF !important;
+            z-index: 4 !important;
+            animation: haloSparkPulse 2.4s infinite ease-in-out !important;
+        }
+        .spark-1 { top: 6px; left: 16px; animation-delay: 0s !important; }
+        .spark-2 { bottom: 10px; right: 12px; animation-delay: 0.8s !important; }
+        .spark-3 { top: 22px; right: 6px; animation-delay: 1.6s !important; }
+
+        @keyframes haloSparkPulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.4); filter: drop-shadow(0 0 8px #00F0FF); }
+        }
+
+        /* Sequential glowing Wi-Fi waves inside the orb */
+        .aloula-halo-wifi-svg .wifi-sig {
+            animation: wifiSequentialWave 1.8s infinite ease-in-out !important;
+        }
+        .aloula-halo-wifi-svg .wifi-sig-1 { animation-delay: 0.2s !important; }
+        .aloula-halo-wifi-svg .wifi-sig-2 { animation-delay: 0.45s !important; }
+        .aloula-halo-wifi-svg .wifi-sig-3 { animation-delay: 0.7s !important; }
+
+        .aloula-halo-wifi-svg .lightning-center-bolt {
+            animation: thunderPulseGlow 2.2s infinite ease-in-out !important;
+            transform-origin: center center !important;
+        }
+
+        /* Golden Thunderbolt Next to Network Title */
+        .brand-bolt-wrap .brand-bolt-icon {
+            animation: thunderPulseGlow 2.6s infinite ease-in-out !important;
+            filter: drop-shadow(0 0 8px rgba(255, 230, 0, 0.85)) drop-shadow(0 0 16px rgba(0, 240, 255, 0.6)) !important;
+            display: inline-block !important;
+            transform-origin: center center !important;
+        }
+
+        .sub-dec-lightning {
+            display: inline-block !important;
+            animation: thunderPulseGlow 2.4s infinite ease-in-out !important;
+        }
+
+        /* ========================================================================= */
+        /* 60fps / 120fps ProMotion Hardware Acceleration & Scroll Fluidity Guarantee */
+        /* ========================================================================= */
+        html, body {
+            -webkit-overflow-scrolling: touch !important;
+            overscroll-behavior-y: none !important;
+        }
+
+        /* Isolate paint and layout contexts so animations never trigger full-page repaints */
+        .app-card,
+        .aloula-hero-card,
+        .status-header-card,
+        .login-input-card,
+        .speed-selection-card,
+        .customer-support-section {
+            contain: layout paint style !important;
+            transform: translateZ(0) !important;
+            -webkit-transform: translateZ(0) !important;
+            backface-visibility: hidden !important;
+            -webkit-backface-visibility: hidden !important;
+        }
+
+        /* Promote all active animated elements to dedicated GPU composite layers without locking keyframe transforms */
+        .aloula-flame-ambient-layer,
         .flame-ember,
         .lightning-spark,
-        body::before,
-        .aloula-hero-card::after,
-        .flame-glow-base,
-        .lightning-glow-base,
-        .brand-name-white .name-text,
-        .brand-net-gold,
-        .sub-dec-dot,
-        .sub-dec-lightning,
+        .aloula-wave-1,
+        .aloula-wave-2,
+        .aloula-wave-3,
         .halo-ring-outer,
-        .aloula-halo-wifi-svg .wifi-sig,
-        .lightning-center-bolt,
-        .login-btn-lightning-icon {
-            animation: none !important;
-            will-change: auto !important;
-        }
-
-        .flame-ember,
-        .lightning-spark {
-            display: none !important;
-        }
-
+        .halo-spark,
+        .wifi-svg-animated,
+        .status-live-pulse-dot,
         .thunder-arc-bolt,
         .card-thunder-corner,
         .btn-thunder-spark,
+        .btn-shine-bar,
         .status-thunder-arc,
-        .gauge-thunder-arc,
-        .pod-thunder-bolt {
-            opacity: 0.88 !important;
+        .gauge-thunder-arc {
+            pointer-events: none !important;
+            backface-visibility: hidden !important;
+            -webkit-backface-visibility: hidden !important;
+            will-change: transform, opacity !important;
         }
 
         /* 60fps / 120fps Ultra-smooth mobile scrolling: Disable real-time backdrop blur on cards */
@@ -897,6 +1017,18 @@
                     <!-- 1. بطاقة الشعار والهوية الفاخرة للشبكة -->
                     <div class="app-card aloula-hero-card">
 
+                        <!-- طبقة شعلات ولهب متصاعدة ومنتشرة من أسفل الحاوية لأعلاها (Pure CSS GPU Embers) -->
+                        <div class="aloula-flame-ambient-layer" aria-hidden="true">
+                            <div class="flame-glow-base"></div>
+                            <div class="flame-ember ember-1"></div>
+                            <div class="flame-ember ember-2"></div>
+                            <div class="flame-ember ember-3"></div>
+                            <div class="flame-ember ember-4"></div>
+                            <div class="flame-ember ember-5"></div>
+                            <div class="flame-ember ember-6"></div>
+                            <div class="flame-ember ember-7"></div>
+                            <div class="flame-ember ember-8"></div>
+                        </div>
 
                         <!-- الخلفية الزخرفية الذهبية الفخمة -->
                         <div class="aloula-bg-glow-layer" aria-hidden="true">
@@ -914,16 +1046,32 @@
                                     </radialGradient>
                                 </defs>
                                 <circle cx="78" cy="88" r="70" fill="url(#haloRadialGlow)"/>
-                                <path d="M0,140 Q110,165 210,125 T400,105 L400,180 L0,180 Z" fill="url(#goldWaveGrad)"/>
-                                <path d="M0,135 Q120,160 220,118 T400,95" fill="none" stroke="rgba(223, 171, 82, 0.25)" stroke-width="1.2"/>
-                                <path d="M0,152 Q130,172 240,130 T400,108" fill="none" stroke="rgba(223, 171, 82, 0.12)" stroke-width="0.8"/>
+                                <path class="aloula-wave-1" d="M0,140 Q110,165 210,125 T400,105 L400,180 L0,180 Z" fill="url(#goldWaveGrad)"/>
+                                <path class="aloula-wave-2" d="M0,135 Q120,160 220,118 T400,95" fill="none" stroke="rgba(0, 240, 255, 0.45)" stroke-width="1.4"/>
+                                <path class="aloula-wave-3" d="M0,152 Q130,172 240,130 T400,108" fill="none" stroke="rgba(255, 230, 0, 0.35)" stroke-width="1"/>
                             </svg>
                         </div>
 
-                        <!-- الشريط العلوي (حالة متصل على اليمين) -->
+                        <!-- الشريط العلوي (حالة متصل مع أنميشن الرادار وموجات الواي فاي) -->
                         <div class="aloula-top-bar">
                             <div class="network-status-badge aloula-status-pill">
-                                <span class="status-pulse-dot"></span>
+                                <span class="status-live-pulse-dot">
+                                    <span class="status-pulse-ring"></span>
+                                    <span class="status-pulse-core"></span>
+                                </span>
+                                <span class="status-wifi-wave-icon">
+                                    <svg viewBox="0 0 24 24" class="wifi-svg-animated" width="16" height="16"
+                                        fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path class="wifi-arc wifi-arc-3" d="M4 7.5C7.4 4.5 12.6 4.5 16 7.5" />
+                                        <path class="wifi-arc wifi-arc-2" d="M6.5 10.5C8.8 8.5 13.2 8.5 15.5 10.5" />
+                                        <path class="wifi-arc wifi-arc-1" d="M9.5 13.5C10.5 12.5 12.5 12.5 13.5 13.5" />
+                                        <circle class="wifi-dot" cx="11.5" cy="16.5" r="1.5" fill="currentColor" stroke="none" />
+                                    </svg>
+                                </span>
+                                <svg viewBox="0 0 24 24" class="status-live-thunder-spark" aria-hidden="true">
+                                    <path d="M11 2L5 13h5l-1 7 8-9h-5l1-7z"/>
+                                </svg>
                                 <span class="status-badge-text">متصل</span>
                             </div>
                         </div>
