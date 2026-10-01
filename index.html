@@ -43,10 +43,28 @@
                               radial-gradient(ellipse at 85% 25%, rgba(0, 114, 255, 0.1) 0%, transparent 45%),
                               radial-gradient(ellipse at 15% 45%, rgba(255, 230, 0, 0.05) 0%, transparent 40%),
                               radial-gradient(ellipse at 50% 90%, rgba(4, 10, 24, 0.95) 0%, transparent 70%) !important;
+            background-attachment: fixed !important;
             color: #ffffff !important;
             margin: 0;
             padding: 0;
             min-height: 100%;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y pinch-zoom;
+        }
+
+        /* Hardware Accelerated Smooth Scroll without Main-Thread Blocking */
+        html {
+            scroll-behavior: auto !important;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        body {
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transform: translateZ(0);
         }
 
         input, select, textarea, button {
@@ -80,7 +98,7 @@
             // If the user already has an active logged-in session, immediately show status screen
             // and hide login screen before the DOM even begins rendering to prevent ANY flicker or jump.
             try {
-                var hasActiveSession = localStorage.getItem("hotspot_active_session") === "1" || /(?:^|;\s*)hotspot_active_session=1/.test(document.cookie);
+                var hasActiveSession = sessionStorage.getItem("hotspot_active_session") === "1" || /(?:^|;\s*)hotspot_active_session=1/.test(document.cookie);
                 if (hasActiveSession) {
                     document.documentElement.classList.add("initial-status-mode");
                     var zeroFlickerStyle = document.createElement('style');
@@ -647,118 +665,13 @@
     </div>
     <script>
         try {
-            if (localStorage.getItem("hotspot_active_session") === "1" || /(?:^|;\s*)hotspot_active_session=1/.test(document.cookie)) {
+            if (sessionStorage.getItem("hotspot_active_session") === "1" || /(?:^|;\s*)hotspot_active_session=1/.test(document.cookie)) {
                 document.body.classList.add("has-active-session");
             }
         } catch(e) {}
     </script>
 
-    <!-- حاوية الأيقونات المتجهة (SVG) الفاخرة العائمة في الخلفية -->
-    <ul class="floating-icons">
-        <!-- 1. Wifi Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98A16.88 16.88 0 0 0 12 4zm0 2.9a13.9 13.9 0 0 1 9.35 3.65L12 19.89 2.65 10.55A13.9 13.9 0 0 1 12 6.9z" />
-            </svg>
-        </li>
-        <!-- 2. Royal Star Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12 1.5l3.09 6.26L22 8.77l-5 4.87 1.18 6.88L12 17.27l-6.18 3.25L7 13.64 2 8.77l6.91-1.01L12 1.5z" />
-            </svg>
-        </li>
-        <!-- 3. Sparkle Diamond Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
-            </svg>
-        </li>
-        <!-- 4. Global Network Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-            </svg>
-        </li>
-        <!-- 5. Modern Gem Diamond Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path d="M19 3H5L2 9l10 12L22 9l-3-6zM5.3 5h13.4l1.5 3H3.8l1.5-3zm6.7 13.5L5.4 10h13.2L12 18.5z" />
-            </svg>
-        </li>
-        <!-- 6. Wifi High Wave Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12 3C6.95 3 2.38 5.05 0 8.41L1.44 9.9C3.47 6.94 7.47 5 12 5c4.53 0 8.53 1.94 10.56 4.9L24 8.41C21.62 5.05 17.05 3 12 3zm0 4c-3.73 0-7.04 1.54-9.4 4l1.45 1.45C5.7 10.82 8.65 9.5 12 9.5c3.35 0 6.3 1.32 8.35 3.35L21.8 11.4C19.44 8.94 16.13 7 12 7zm0 4c-2.4 0-4.57 1-6.14 2.6L12 21l6.14-7.4A8.52 8.52 0 0 0 12 11z" />
-            </svg>
-        </li>
-        <!-- 7. High-Speed Lightning Bolt Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path d="M7 2v11h3v9l7-12h-4l4-8H7z" />
-            </svg>
-        </li>
-        <!-- 8. Four Point Star Burst Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path d="M12 0l2.6 8.4L23 11l-8.4 2.6L12 22l-2.6-8.4L1 11l8.4-2.6L12 0z" />
-            </svg>
-        </li>
-        <!-- 9. Wifi Strong Signal Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98A16.88 16.88 0 0 0 12 4zm0 2.9a13.9 13.9 0 0 1 9.35 3.65L12 19.89 2.65 10.55A13.9 13.9 0 0 1 12 6.9z" />
-            </svg>
-        </li>
-        <!-- 10. Royal Star Outline Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-        </li>
-        <!-- 11. Diamond Sparkle Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
-            </svg>
-        </li>
-        <!-- 12. Wifi Full Wave Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12 3C6.95 3 2.38 5.05 0 8.41L1.44 9.9C3.47 6.94 7.47 5 12 5c4.53 0 8.53 1.94 10.56 4.9L24 8.41C21.62 5.05 17.05 3 12 3zm0 4c-3.73 0-7.04 1.54-9.4 4l1.45 1.45C5.7 10.82 8.65 9.5 12 9.5c3.35 0 6.3 1.32 8.35 3.35L21.8 11.4C19.44 8.94 16.13 7 12 7zm0 4c-2.4 0-4.57 1-6.14 2.6L12 21l6.14-7.4A8.52 8.52 0 0 0 12 11z" />
-            </svg>
-        </li>
-        <!-- 13. Fast Flash Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path d="M7 2v11h3v9l7-12h-4l4-8H7z" />
-            </svg>
-        </li>
-        <!-- 14. Crown Star Gem Icon -->
-        <li>
-            <svg viewBox="0 0 24 24">
-                <path d="M19 3H5L2 9l10 12L22 9l-3-6z" />
-            </svg>
-        </li>
-    </ul>
 
-    <!-- Ambient Mesh Background -->
-    <div class="screen-background">
-        <span class="screen-background-shape screen-background-shape1"></span>
-        <span class="screen-background-shape screen-background-shape2"></span>
-        <span class="screen-background-shape screen-background-shape3"></span>
-        <span class="screen-background-shape screen-background-shape4"></span>
-        <span class="screen-background-shape screen-background-shape5"></span>
-        <span class="screen-background-shape screen-background-shape6"></span>
-        <span class="screen-background-shape screen-background-shape7"></span>
-        <span class="screen-background-shape screen-background-shape8"></span>
-    </div>
 
     <!-- 2026 Floating Glass Toast Notifications Stack -->
     <div class="error-container">
@@ -814,18 +727,7 @@
 
                     <!-- 1. بطاقة الشعار والهوية الفاخرة للشبكة -->
                     <div class="app-card aloula-hero-card">
-                        <!-- طبقة شعلات ولهب متصاعدة ومنتشرة عالية الأداء (Pure CSS GPU Embers) -->
-                        <div class="aloula-flame-ambient-layer" aria-hidden="true">
-                            <div class="flame-glow-base"></div>
-                            <div class="flame-ember ember-1"></div>
-                            <div class="flame-ember ember-2"></div>
-                            <div class="flame-ember ember-3"></div>
-                            <div class="flame-ember ember-4"></div>
-                            <div class="flame-ember ember-5"></div>
-                            <div class="flame-ember ember-6"></div>
-                            <div class="flame-ember ember-7"></div>
-                            <div class="flame-ember ember-8"></div>
-                        </div>
+
 
                         <!-- الخلفية الزخرفية الذهبية الفخمة -->
                         <div class="aloula-bg-glow-layer" aria-hidden="true">

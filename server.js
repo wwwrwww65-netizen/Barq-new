@@ -100,7 +100,28 @@ app.all(['/login', '/login.html'], (req, res) => {
       action: "onLoginError"
     });
   }
-  if (username.toLowerCase() === 'wrong' || username.toLowerCase() === 'error') {
+  if (username === '4444' || username.toLowerCase() === 'uptime') {
+    return res.json({
+      logged_in: "no",
+      error: "uptime limit reached",
+      action: "onLoginError"
+    });
+  }
+  if (username === '5555' || username.toLowerCase() === 'traffic') {
+    return res.json({
+      logged_in: "no",
+      error: "traffic limit reached",
+      action: "onLoginError"
+    });
+  }
+  if (username === '6666' || username.toLowerCase() === 'mac') {
+    return res.json({
+      logged_in: "no",
+      error: "cannot log in from this MAC",
+      action: "onLoginError"
+    });
+  }
+  if (username === '0000' || username.toLowerCase() === 'wrong' || username.toLowerCase() === 'error' || username.toLowerCase() === 'خطأ' || username.toLowerCase() === 'invalid') {
     return res.json({
       logged_in: "no",
       error: "invalid username or password",
